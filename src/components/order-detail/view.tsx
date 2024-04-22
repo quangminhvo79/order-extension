@@ -1,5 +1,6 @@
-import { Stack, Input } from "@mui/material";
+import { Stack } from "@mui/material";
 import { Checkbox, Table } from "flowbite-react";
+import { useEffect, useState } from "react";
 
 const products = [
   {
@@ -23,6 +24,16 @@ const products = [
 ]
 
 const OrderDetailView = () => {
+  const [orders, setOrders] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data =  await chrome.storage.sync.get("orders");
+      setOrders(data.orders)
+    }
+    fetchData()
+  }, [chrome.storage.sync])
+
   return (
     <div className="overflow-x-hidden">
       <Table hoverable>
@@ -41,7 +52,7 @@ const OrderDetailView = () => {
         </Table.Head>
 
         <Table.Body className="divide-y">
-          {products.map(item => (
+          {(orders || products).map(item => (
             <Table.Row key={item.name} className="bg-white dark:border-gray-700 dark:bg-gray-800">
               <Table.Cell className="p-4">
                 <Checkbox />

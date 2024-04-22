@@ -1,4 +1,4 @@
-section::before {
+/* section::before {
   content: '';
   position: fixed;
   z-index: -1;
@@ -7,9 +7,9 @@ section::before {
   background-image: url('https://source.unsplash.com/random');
   background-size: cover;
   filter: blur(10px);
-}
+} */
 
-section {
+/* section {
   width: 100vw;
   height: 100vh;
 
@@ -17,4 +17,4 @@ section {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-}
+} */
