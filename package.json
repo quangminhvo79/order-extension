@@ -23,11 +23,21 @@
     "zip": "npm run build && node src/zip.js"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@fontsource/roboto": "^5.0.13",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
+    "autoprefixer": "^10.4.19",
+    "flowbite-react": "^0.9.0",
+    "postcss": "^8.4.38",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.19",
+    "@rollup/plugin-alias": "^5.1.0",
     "@types/chrome": "^0.0.246",
     "@types/react": "^18.2.28",
     "@types/react-dom": "^18.2.13",
@@ -35,6 +45,8 @@
     "gulp": "^4.0.2",
     "gulp-zip": "^6.0.0",
     "prettier": "^3.0.3",
+    "sass": "^1.75.0",
+    "tailwindcss": "^3.4.3",
     "typescript": "^5.2.2",
     "vite": "^4.4.11"
   }
