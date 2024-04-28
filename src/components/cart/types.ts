@@ -1,4 +1,5 @@
 import { ProductType } from '@/types/product'
+import { Dispatch, SetStateAction } from 'react'
 
 export type ItemByShopType = {
   shopName: string
@@ -19,5 +20,10 @@ export type CartViewProps = {
   allItemChecked: boolean
   allItemByShopChecked: {
     [key: string]: boolean
-  }
+  },
+  openDepositDialog: boolean
+  setOpenDepositDialog: Dispatch<SetStateAction<boolean>>
+  increaseQty: (productId: string) => void
+  decreaseQty: (productId: string) => void
+  onChangeQty: (productId: string, qty: number) => void
 }

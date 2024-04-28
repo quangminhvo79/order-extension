@@ -7,21 +7,23 @@ import { ProductType } from '@/types/product'
 import { ItemByShopType } from './types'
 
 import View from './view'
+import { BasePrice } from '@/utils/helpers'
 
 const CartContainer = () => {
   const [cart, setCart] = useState<ItemByShopType[]>()
   const [productSelected, setProductSelected] = useState<string[]>([])
+  const [openDepositDialog, setOpenDepositDialog] = useState(false)
 
   const totalCash = useMemo(() => {
     if (!productSelected.length) return 0
 
-    // return cart.map((item: ProductType) => )
-                // .reduce((a: number, b: number) => a + b, 0)
-    return cart?.flatMap((item) => item.items.map((product) => {
+    const totalToken = cart?.flatMap((item) => item.items.map((product) => {
       return productSelected.includes(product.id) ? (
-        Number(product.salePrice) !== 0 ? Number(product.salePrice) : Number(product.price)
+        Number(product.salePrice) !== 0 ? Number(product.salePrice) * Number(product.qty) : Number(product.price) * Number(product.qty)
       ) : 0
-    })).reduce((a: number, b: number) => a + b, 0)
+    })).reduce((a: number, b: number) => a + b, 0) || 0
+
+    return totalToken * BasePrice
   }, [cart, productSelected])
 
   const buildCart = useCallback(async (order: ProductType[]) => {
@@ -66,6 +68,7 @@ const CartContainer = () => {
 
   const onClearAll = useCallback(() => {
     setCart(undefined)
+    setProductSelected([])
     chrome.storage.sync.remove('order')
   }, [])
 
@@ -126,6 +129,36 @@ const CartContainer = () => {
     }
   }, [addProductToCheckoutList, cart, removeProductFromCheckoutList])
 
+  const increaseQty = useCallback(async (productId: string) => {
+    const { order } = await chrome.storage.sync.get('order')
+    if (order) {
+      const product = order.find((item: ProductType) => item.id === productId)
+      product.qty = Number(product.qty) + 1
+      buildCart(order)
+      chrome.storage.sync.set({ order })
+    }
+  }, [buildCart])
+
+  const decreaseQty = useCallback(async (productId: string) => {
+    const { order } = await chrome.storage.sync.get('order')
+    if (order) {
+      const product = order.find((item: ProductType) => item.id === productId)
+      product.qty = Number(product.qty) - 1
+      buildCart(order)
+      chrome.storage.sync.set({ order })
+    }
+  }, [buildCart])
+
+  const onChangeQty = useCallback(async (productId: string, qty: number) => {
+    const { order } = await chrome.storage.sync.get('order')
+    if (order) {
+      const product = order.find((item: ProductType) => item.id === productId)
+      product.qty = qty
+      buildCart(order)
+      chrome.storage.sync.set({ order })
+    }
+  }, [buildCart])
+
   useEffect(() => {
     const fetchData = async () => {
       const { order } = await chrome.storage.sync.get('order')
@@ -146,6 +179,11 @@ const CartContainer = () => {
     onCheckAllByShop,
     allItemChecked,
     allItemByShopChecked,
+    openDepositDialog,
+    setOpenDepositDialog,
+    increaseQty,
+    decreaseQty,
+    onChangeQty,
   }
 
   return <View {...computedProps} />

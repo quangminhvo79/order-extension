@@ -6,6 +6,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import Product from './product'
 import Shop from './shop'
 import ContactRow from './contact'
+import DepositDialog from './deposit'
+import { formatPrice } from '@/utils/helpers'
 
 const CartView = ({
   cart,
@@ -18,7 +20,14 @@ const CartView = ({
   onCheckAll,
   allItemChecked,
   allItemByShopChecked,
+  openDepositDialog,
+  setOpenDepositDialog,
+  increaseQty,
+  decreaseQty,
+  onChangeQty,
 }: CartViewProps) => {
+
+  const totalCashText = `Tổng thanh toán (${productSelected?.length} sản phẩm): `
 
   return (
     <Box className="w-full p-4">
@@ -31,7 +40,7 @@ const CartView = ({
           Xóa tất cả đơn hàng
         </Button>
       </Stack>
-      <Box>
+      <Box className="p-2 overflow-x-auto">
         <Table hoverable>
           <Table.Head className="text-orange-500 border-b border-gray-400">
             <Table.HeadCell className="p-4 bg-slate-100">
@@ -57,6 +66,9 @@ const CartView = ({
                     onRemoveProduct={onRemoveProduct}
                     onCheckboxChange={onCheckboxChange}
                     productSelected={productSelected}
+                    increaseQty={increaseQty}
+                    decreaseQty={decreaseQty}
+                    onChangeQty={onChangeQty}
                   />
                 ))}
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -69,17 +81,23 @@ const CartView = ({
             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
               <Table.Cell className="font-medium text-orange-500 whitespace-nowrap dark:text-white" colSpan={6}>
                 <Stack className="flex-row items-center justify-end space-x-3">
-                  <Typography className="font-bold text-orange-500">
-                    Tổng cộng: {JSON.stringify(totalCash)} đ
+                  <Typography>
+                    <span className="text-sm text-gray-700">{totalCashText}</span>
+                    <span className="text-2xl font-bold text-orange-500">{ formatPrice(Number(totalCash)) }</span>
                   </Typography>
-                  <Button color="light" size="md" className="text-orange-500 border-orange-300">
-                    Thanh toán
+                  <Button
+                    color="light" size="md" className="text-orange-500 border-orange-300"
+                    onClick={() => setOpenDepositDialog(true)}
+                    disabled={!totalCash || totalCash === 0}
+                  >
+                    Đặt cọc
                   </Button>
                 </Stack>
               </Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table>
+        <DepositDialog isOpened={openDepositDialog} setOpen={setOpenDepositDialog} />
       </Box>
     </Box>
   )

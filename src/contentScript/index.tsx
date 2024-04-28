@@ -1,6 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import OrderButton from '@/components/create-order-btn'
+import PriceAsVND from '@/components/price-as-vnd'
 import { ToastContainer } from 'react-toastify'
 
 import '@/styles/global.scss'
@@ -47,4 +48,33 @@ if (actionBtns && marketWhiteList.includes(document.location.hostname)) {
 
   // eslint-disable-next-line no-console
   console.info('Content Script: Order Extension Loaded')
+}
+
+const interval = setInterval(() => {
+  console.log('interval')
+  AddPriceTag()
+}, 100)
+
+const AddPriceTag = () => {
+  const priceWrap = document.querySelector('[class*="Price--root--"]')
+  try {
+    if (priceWrap) {
+      if (!document.getElementById('price-in-vnd')) {
+        const app = document.createElement('div')
+        app.style.marginTop = '10px'
+        app.id = 'price-in-vnd'
+
+        priceWrap.after(app)
+        clearInterval(interval)
+      }
+
+      createRoot(document.getElementById('price-in-vnd') as HTMLElement).render(
+        <React.StrictMode>
+          <PriceAsVND />
+        </React.StrictMode>,
+      )
+    }
+  } catch (error) {
+    clearInterval(interval)
+  }
 }

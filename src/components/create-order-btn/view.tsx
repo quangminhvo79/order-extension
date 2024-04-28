@@ -1,5 +1,4 @@
-import { Button } from "flowbite-react";
-import PriceAsVND from "@/components/price-as-vnd";
+import { Button } from 'flowbite-react'
 
 const CreateOrderBtnView = ({
   onSubmit,
@@ -7,16 +6,13 @@ const CreateOrderBtnView = ({
   onSubmit: () => void
 }) => {
   return (
-    <>
-      <div>
-        <Button gradientMonochrome="failure" onClick={onSubmit} size="lg">
-          Tạo Đơn
-        </Button>
-      </div>
-      <PriceAsVND />
-    </>
+    <div>
+      <Button gradientMonochrome="failure" onClick={onSubmit} size="lg">
+        Tạo Đơn
+      </Button>
+    </div>
   )
 
 }
 
-export default CreateOrderBtnView;
+export default CreateOrderBtnView

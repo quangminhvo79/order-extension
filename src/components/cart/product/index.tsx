@@ -3,18 +3,27 @@ import { Link, Stack, Typography } from '@mui/material'
 import { Button, Checkbox, Table } from 'flowbite-react'
 import cls from 'classnames'
 import { useMemo } from 'react'
+import { BasePrice, formatPrice } from '@/utils/helpers'
+
+type ProductProps = {
+  product: ProductType,
+  onRemoveProduct: (productId: string) => void
+  onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>, productId: string) => void
+  productSelected?: string[]
+  increaseQty: (productId: string) => void
+  decreaseQty: (productId: string) => void
+  onChangeQty: (productId: string, qty: number) => void
+}
 
 const Product = ({
   product,
   onRemoveProduct,
   onCheckboxChange,
   productSelected,
-}: {
-  product: ProductType,
-  onRemoveProduct: (productId: string) => void
-  onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>, productId: string) => void
-  productSelected?: string[]
-}) => {
+  increaseQty,
+  decreaseQty,
+  onChangeQty,
+}: ProductProps) => {
   const checked = useMemo(() => {
     return productSelected?.includes(product.id)
   }, [product.id, productSelected])
@@ -30,7 +39,7 @@ const Product = ({
             {product.image && <img srcSet={product.image} src={product.image} alt={product.name} loading="lazy" className="max-w-fit" />}
             {product.video && <video src={product.video} className="max-w-fit" />}
           </Stack>
-          <Stack className="w-[240px]">
+          <Stack className="min-w-[240px]">
             <Link href={product.link} target="_blank" className="text-orange-500">
               <Stack>
                 <Typography className="text-wrap">{product.name}</Typography>
@@ -49,19 +58,22 @@ const Product = ({
         </Stack>
       </Table.Cell>
       <Table.Cell>
-        <Stack className="flex-col">
-          <Typography className="whitespace-nowrap">{product.price} đ</Typography>
+        <Stack className="flex-col min-w-[100px] w-fit">
+          <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * BasePrice)}</Typography>
           {Boolean(product.salePrice[0]) && (
             <Typography className="text-orange-500 whitespace-nowrap">
               <span>Sau Giảm Giá: </span>
-              <span className="font-bold text-orange-500">{Number(product.salePrice)} đ</span>
+              <span className="font-bold text-orange-500">{ formatPrice(Number(product.salePrice) * BasePrice )} đ</span>
             </Typography>
           )}
         </Stack>
       </Table.Cell>
       <Table.Cell>
         <div className="flex items-center">
-          <button className="inline-flex items-center justify-center w-6 h-6 p-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full me-3 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
+          <button
+            className="inline-flex items-center justify-center w-6 h-6 p-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full me-3 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button"
+            onClick={() => decreaseQty(product.id)}
+          >
             <span className="sr-only">Quantity button</span>
             <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16"/>
@@ -74,9 +86,13 @@ const Product = ({
               placeholder="1"
               required
               value={product.qty}
+              onChange={(e) => onChangeQty(product.id, Number(e.target.value))}
             />
           </div>
-          <button className="inline-flex items-center justify-center w-6 h-6 p-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full ms-3 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
+          <button
+            className="inline-flex items-center justify-center w-6 h-6 p-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full ms-3 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button"
+            onClick={() => increaseQty(product.id)}
+          >
             <span className="sr-only">Quantity button</span>
             <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
@@ -90,10 +106,10 @@ const Product = ({
             'font-bold text-black': !Boolean(product.salePrice[0]),
             'text-gray-400 line-through': Boolean(product.salePrice[0]),
           }) }>
-            {Number(product.price) * Number(product.qty)} đ
+            { formatPrice(BasePrice * Number(product.price) * Number(product.qty)) }
           </Typography>
           {Boolean(product.salePrice[0]) && (
-            <Typography className="font-bold text-orange-500 whitespace-nowrap">{Number(product.salePrice) * Number(product.qty)} đ</Typography>
+            <Typography className="font-bold text-orange-500 whitespace-nowrap">{ formatPrice(BasePrice * Number(product.salePrice) * Number(product.qty)) }</Typography>
           )}
         </Stack>
       </Table.Cell>

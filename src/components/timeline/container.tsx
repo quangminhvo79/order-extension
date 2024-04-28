@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import View from './view'
 
 const TimelineContainer = () => {
@@ -8,8 +8,20 @@ const TimelineContainer = () => {
     'Đặt cọc và kết đơn',
   ], [])
 
+  const [activeStep, setActiveStep] = useState(0)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { order } = await chrome.storage.sync.get('order')
+      const { contact } = await chrome.storage.sync.get('contact')
+      order && contact ? setActiveStep(1) : setActiveStep(0)
+    }
+    fetchData()
+  }, [])
+
   const computedProps = {
     steps,
+    activeStep,
   }
   return <View {...computedProps} />
 }

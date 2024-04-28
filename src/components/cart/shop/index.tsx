@@ -1,18 +1,19 @@
 import { Link, Stack } from '@mui/material'
 import { Checkbox, Table } from 'flowbite-react'
 import StoreIcon from '@mui/icons-material/Store'
-import { ItemByShopType } from './types'
+import { ItemByShopType } from '../types'
+
+type ShopProps = {
+  orderByShop: ItemByShopType,
+  onCheckAllByShop: (event: React.ChangeEvent<HTMLInputElement>, shopId: string) => void
+  checked: boolean
+}
 
 const Shop = ({
   orderByShop,
   onCheckAllByShop,
   checked,
-}: {
-  orderByShop: ItemByShopType,
-  onCheckAllByShop: (event: React.ChangeEvent<HTMLInputElement>, shopId: string) => void
-  checked: boolean
-}) => {
-
+}: ShopProps) => {
   return (
     <Table.Row key={orderByShop.shopName} className="bg-white dark:border-gray-700 dark:bg-gray-800">
       <Table.Cell className="p-4">
