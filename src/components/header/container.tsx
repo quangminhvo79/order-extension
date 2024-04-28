@@ -4,4 +4,4 @@ const HeaderContainer = () => {
   return <View />
 }
 
-export default HeaderContainer;
+export default HeaderContainer

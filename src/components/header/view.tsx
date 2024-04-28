@@ -1,28 +1,30 @@
-import { Navbar } from "flowbite-react";
+import { Navbar } from 'flowbite-react'
 import Logo from '@/assets/logo.png'
+
 const HeaderView = () => {
   return (
     <div className="w-full">
       <Navbar fluid rounded>
         <Navbar.Brand href="https://flowbite-react.com">
-          <img src={Logo} className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo" />
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Order Tool</span>
+          <img src={Logo} className="h-6 mr-3 sm:h-9" alt="Flowbite React Logo" />
+          <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Order Tool</span>
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Navbar.Link href="#" active>
-            Home
+            Đơn Hàng
           </Navbar.Link>
           <Navbar.Link href="#">
-            About
+            Giao Dịch
           </Navbar.Link>
-          <Navbar.Link href="#">Services</Navbar.Link>
-          <Navbar.Link href="#">Pricing</Navbar.Link>
-          <Navbar.Link href="#">Contact</Navbar.Link>
+          <Navbar.Link href="#">Khiếu Nại</Navbar.Link>
+          <Navbar.Link href="#">Biểu Phí</Navbar.Link>
+          <Navbar.Link href="#">Hỗ Trợ</Navbar.Link>
+          <Navbar.Link href="#">Công Cụ</Navbar.Link>
         </Navbar.Collapse>
       </Navbar>
     </div>
-  );
+  )
 }
 
 export default HeaderView

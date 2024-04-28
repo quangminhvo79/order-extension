@@ -19,8 +19,11 @@
       "@/assets/*": ["./src/assets/*"],
       "@/components/*": ["./src/components/*"],
       "@/utils/*": ["./src/utils/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/types/*": ["./src/types/*"],
     }
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "exclude": ["node_modules", "cypress", ".eslintrc.js", "./cypress.config.ts"]
 }

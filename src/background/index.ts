@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
   if (request.action === 'openSidebar') {
     chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
       // @ts-ignore
-      chrome.sidePanel.open({ tabId: tab.id });
-    });
+      chrome.sidePanel.open({ tabId: tab.id })
+    })
   }
 })
