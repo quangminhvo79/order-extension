@@ -20,7 +20,8 @@
       "@/components/*": ["./src/components/*"],
       "@/utils/*": ["./src/utils/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@/types/*": ["./src/types/*"],
+      "@/models/*": ["./src/models/*"],
+      "@/*": ["./src/*"],
     }
   },
   "include": ["src"],

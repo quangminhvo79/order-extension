@@ -1,11 +1,11 @@
-import { ProductType } from '@/types/product'
+import { type Product } from '@/models/product'
 import { Dispatch, SetStateAction } from 'react'
 
 export type ItemByShopType = {
   shopName: string
   shopLink: string
   shopId: string
-  items: ProductType[]
+  items: Product[]
 }
 
 export type CartViewProps = {

@@ -4,7 +4,7 @@ import packageData from '../package.json'
 //@ts-ignore
 const isDev = process.env.NODE_ENV == 'development'
 
-export default defineManifest({
+let manifest = {
   name: `${packageData.displayName || packageData.name}${isDev ? ` ➡️ Dev` : ''}`,
   description: packageData.description,
   version: packageData.version,
@@ -23,11 +23,10 @@ export default defineManifest({
   devtools_page: 'devtools.html',
   background: {
     service_worker: 'src/background/index.ts',
-    type: 'module',
   },
   content_scripts: [
     {
-      matches: ["https://item.taobao.com/*", "https://detail.tmall.com/*"],
+      matches: ['https://item.taobao.com/*', 'https://detail.tmall.com/*'],
       js: ['src/contentScript/index.tsx'],
     },
   ],
@@ -44,4 +43,6 @@ export default defineManifest({
   chrome_url_overrides: {
     newtab: 'newtab.html',
   },
-})
+}
+
+export default defineManifest(manifest)

@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import View from './view'
+import useProduct from '@/hooks/use-product'
+import useContact from '@/hooks/use-contact'
 
 const TimelineContainer = () => {
+  const { products } = useProduct()
+  const { contact } = useContact()
+
   const steps = useMemo(() => [
     'Giỏ Hàng',
     'Xác nhận địa chỉ nhận hàng',
@@ -11,13 +16,8 @@ const TimelineContainer = () => {
   const [activeStep, setActiveStep] = useState(0)
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { order } = await chrome.storage.sync.get('order')
-      const { contact } = await chrome.storage.sync.get('contact')
-      order && contact ? setActiveStep(1) : setActiveStep(0)
-    }
-    fetchData()
-  }, [])
+    products && contact ? setActiveStep(1) : setActiveStep(0)
+  }, [products, contact])
 
   const computedProps = {
     steps,

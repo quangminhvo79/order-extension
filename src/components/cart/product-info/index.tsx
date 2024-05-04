@@ -1,4 +1,4 @@
-import { ProductType } from '@/types/product'
+import { type Product } from '@/models/product'
 import { Link, Stack, Typography } from '@mui/material'
 import { Button, Checkbox, Table } from 'flowbite-react'
 import cls from 'classnames'
@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import { BasePrice, formatPrice } from '@/utils/helpers'
 
 type ProductProps = {
-  product: ProductType,
+  product: Product,
   onRemoveProduct: (productId: string) => void
   onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>, productId: string) => void
   productSelected?: string[]

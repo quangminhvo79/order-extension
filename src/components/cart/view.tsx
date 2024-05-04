@@ -3,9 +3,9 @@ import { Button } from 'flowbite-react'
 import { Checkbox, Table } from 'flowbite-react'
 import { CartViewProps } from './types'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
-import Product from './product'
+import ProductInfo from './product-info'
 import Shop from './shop'
-import ContactRow from './contact'
+import ContactRow from './contact-info'
 import DepositDialog from './deposit'
 import { formatPrice } from '@/utils/helpers'
 
@@ -58,9 +58,9 @@ const CartView = ({
           <Table.Body className="divide-y">
             {cart && cart.map(orderByShop => (
               <>
-                <Shop orderByShop={orderByShop} onCheckAllByShop={onCheckAllByShop} checked={allItemByShopChecked[orderByShop.shopId]}/>
+                <Shop key={orderByShop.shopId} orderByShop={orderByShop} onCheckAllByShop={onCheckAllByShop} checked={allItemByShopChecked[orderByShop.shopId]}/>
                 {orderByShop.items && orderByShop.items.map((product) => (
-                  <Product
+                  <ProductInfo
                     key={product.id}
                     product={product}
                     onRemoveProduct={onRemoveProduct}

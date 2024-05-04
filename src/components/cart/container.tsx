@@ -2,17 +2,19 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import isEmpty from 'lodash/isEmpty'
 import compact from 'lodash/compact'
 import includes from 'lodash/includes'
-import { ProductType } from '@/types/product'
+import { type Product } from '@/models/product'
 
 import { ItemByShopType } from './types'
 
 import View from './view'
 import { BasePrice } from '@/utils/helpers'
+import useProduct from '@/hooks/use-product'
 
 const CartContainer = () => {
   const [cart, setCart] = useState<ItemByShopType[]>()
   const [productSelected, setProductSelected] = useState<string[]>([])
   const [openDepositDialog, setOpenDepositDialog] = useState(false)
+  const { getProducts, removeAllProducts, saveProducts } = useProduct()
 
   const totalCash = useMemo(() => {
     if (!productSelected.length) return 0
@@ -26,9 +28,9 @@ const CartContainer = () => {
     return totalToken * BasePrice
   }, [cart, productSelected])
 
-  const buildCart = useCallback(async (order: ProductType[]) => {
+  const buildCart = useCallback(async (order: Product[]) => {
     if (!isEmpty(order)) {
-      const result = Object.groupBy(order, ({ shopId }: ProductType) => shopId)
+      const result = Object.groupBy(order, ({ shopId }: Product) => shopId)
 
       if (result) {
         const _order = Object.keys(result).map((key) => {
@@ -50,16 +52,16 @@ const CartContainer = () => {
 
   const onRemoveProduct = useCallback((productId: string) => {
     const fetchData = async () => {
-      const { order } = await chrome.storage.sync.get('order')
-      if (!order) return
-      const newOrder = order.filter((item: ProductType) => item.id !== productId)
+      const products = await getProducts()
+      if (!products) return
+      const newProducts = products.filter((item: Product) => item.id !== productId)
 
-      if (isEmpty(newOrder)) {
-        chrome.storage.sync.remove('order')
+      if (isEmpty(newProducts)) {
+        removeAllProducts()
         setCart(undefined)
       } else {
-        chrome.storage.sync.set({ order: newOrder })
-        buildCart(newOrder)
+        saveProducts(newProducts)
+        buildCart(newProducts)
       }
     }
 
@@ -69,7 +71,7 @@ const CartContainer = () => {
   const onClearAll = useCallback(() => {
     setCart(undefined)
     setProductSelected([])
-    chrome.storage.sync.remove('order')
+    removeAllProducts()
   }, [])
 
   const addProductToCheckoutList = useCallback((productId: string) => {
@@ -130,39 +132,39 @@ const CartContainer = () => {
   }, [addProductToCheckoutList, cart, removeProductFromCheckoutList])
 
   const increaseQty = useCallback(async (productId: string) => {
-    const { order } = await chrome.storage.sync.get('order')
-    if (order) {
-      const product = order.find((item: ProductType) => item.id === productId)
+    const products = await getProducts()
+    if (products) {
+      const product = products.find((item: Product) => item.id === productId)
       product.qty = Number(product.qty) + 1
-      buildCart(order)
-      chrome.storage.sync.set({ order })
+      buildCart(products)
+      saveProducts(products)
     }
   }, [buildCart])
 
   const decreaseQty = useCallback(async (productId: string) => {
-    const { order } = await chrome.storage.sync.get('order')
-    if (order) {
-      const product = order.find((item: ProductType) => item.id === productId)
+    const products = await getProducts()
+    if (products) {
+      const product = products.find((item: Product) => item.id === productId)
       product.qty = Number(product.qty) - 1
-      buildCart(order)
-      chrome.storage.sync.set({ order })
+      buildCart(products)
+      saveProducts(products)
     }
   }, [buildCart])
 
   const onChangeQty = useCallback(async (productId: string, qty: number) => {
-    const { order } = await chrome.storage.sync.get('order')
-    if (order) {
-      const product = order.find((item: ProductType) => item.id === productId)
+    const products = await getProducts()
+    if (products) {
+      const product = products.find((item: Product) => item.id === productId)
       product.qty = qty
-      buildCart(order)
-      chrome.storage.sync.set({ order })
+      buildCart(products)
+      chrome.storage.sync.set(products)
     }
   }, [buildCart])
 
   useEffect(() => {
     const fetchData = async () => {
-      const { order } = await chrome.storage.sync.get('order')
-      buildCart(order)
+      const products = await getProducts()
+      buildCart(products)
     }
 
     fetchData()

@@ -51,7 +51,6 @@ if (actionBtns && marketWhiteList.includes(document.location.hostname)) {
 }
 
 const interval = setInterval(() => {
-  console.log('interval')
   AddPriceTag()
 }, 100)
 

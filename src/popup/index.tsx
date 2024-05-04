@@ -8,10 +8,10 @@ import '@fontsource/roboto/700.css'
 
 import '@/styles/global.scss'
 import 'react-toastify/dist/ReactToastify.css'
-import ContactForm from '@/components/contact-form'
+import App from '@/app'
 
 ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
   <React.StrictMode>
-    <ContactForm />
+    <App />
   </React.StrictMode>,
 )
