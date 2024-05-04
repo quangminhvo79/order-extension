@@ -14,15 +14,13 @@ const CartContainer = () => {
   const [cart, setCart] = useState<ItemByShopType[]>()
   const [productSelected, setProductSelected] = useState<string[]>([])
   const [openDepositDialog, setOpenDepositDialog] = useState(false)
-  const { getProducts, removeAllProducts, saveProducts } = useProduct()
+  const { getProducts, removeAllProducts, saveProducts, calcProductTotalPrice } = useProduct()
 
   const totalCash = useMemo(() => {
     if (!productSelected.length) return 0
 
     const totalToken = cart?.flatMap((item) => item.items.map((product) => {
-      return productSelected.includes(product.id) ? (
-        Number(product.salePrice) !== 0 ? Number(product.salePrice) * Number(product.qty) : Number(product.price) * Number(product.qty)
-      ) : 0
+      return productSelected.includes(product.id) ? calcProductTotalPrice(product) : 0
     })).reduce((a: number, b: number) => a + b, 0) || 0
 
     return totalToken * BasePrice

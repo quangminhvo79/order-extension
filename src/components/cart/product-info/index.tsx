@@ -60,7 +60,7 @@ const Product = ({
       <Table.Cell>
         <Stack className="flex-col min-w-[100px] w-fit">
           <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * BasePrice)}</Typography>
-          {Boolean(product.salePrice[0]) && (
+          {Boolean(product.salePrice) && (
             <Typography className="text-orange-500 whitespace-nowrap">
               <span>Sau Giảm Giá: </span>
               <span className="font-bold text-orange-500">{ formatPrice(Number(product.salePrice) * BasePrice )} đ</span>
@@ -103,12 +103,12 @@ const Product = ({
       <Table.Cell>
         <Stack className="flex-col">
           <Typography className={ cls('whitespace-nowrap', {
-            'font-bold text-black': !Boolean(product.salePrice[0]),
-            'text-gray-400 line-through': Boolean(product.salePrice[0]),
+            'font-bold text-black': !Boolean(product.salePrice),
+            'text-gray-400 line-through': Boolean(product.salePrice),
           }) }>
             { formatPrice(BasePrice * Number(product.price) * Number(product.qty)) }
           </Typography>
-          {Boolean(product.salePrice[0]) && (
+          {Boolean(product.salePrice) && (
             <Typography className="font-bold text-orange-500 whitespace-nowrap">{ formatPrice(BasePrice * Number(product.salePrice) * Number(product.qty)) }</Typography>
           )}
         </Stack>
