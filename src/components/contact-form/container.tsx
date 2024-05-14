@@ -66,10 +66,11 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
       return _district
     }
     return null
-  }, [getDistrict, province])
+  }, [district, getDistrict, province])
 
   const wards = useMemo(() => {
-    let _wards;
+    let _wards
+
     if (province && district) {
       _wards = getWard(province, district)
     } else if (province && districts && districts.length > 0) {
@@ -82,7 +83,7 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
     }
 
     return null
-  }, [district, getWard, province, districts])
+  }, [province, district, districts, getWard, ward])
 
   const onSubmit = useCallback(() => {
     if (formRef.current?.checkValidity()) {
@@ -104,7 +105,7 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
         navigate('/')
       }
     }
-  }, [address, district, note, phone, province, recipient, ward])
+  }, [address, district, navigate, newWindow, note, phone, province, recipient, saveContact, ward])
 
   useEffect(() => {
     if (contact) {

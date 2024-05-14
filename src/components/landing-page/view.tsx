@@ -1,53 +1,54 @@
-
-import { useCallback } from 'react'
-import { BottomNavigation, BottomNavigationAction, Box, Paper, Stack, Typography } from '@mui/material'
-import ContactsIcon from '@mui/icons-material/Contacts'
-import ConnectWithoutContactIcon from '@mui/icons-material/ConnectWithoutContact'
-import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
+import { Box, Paper, Stack, Typography } from '@mui/material'
 import { Button } from 'flowbite-react'
-import { useNavigate } from "react-router-dom";
+import PopupLayout from '@/layouts/popup_layout'
 
-const LandingPageView = () => {
-  const navigate = useNavigate()
+type LandingPageViewProps = {
+  onSignIn: () => void
+  onSignUp: () => void
+  onSignOut: () => void
+  user?: {
+    attributes: object
+  }
+  userName?: string
+}
 
-  const openSideBar = useCallback(() => {
-    chrome.runtime.sendMessage({ action: 'openSidebar' })
-    const currentWindow = chrome.extension.getViews({ type: "popup" })[0];
-    currentWindow.close()
-  }, [])
-
-  const onChangeContact = useCallback(() => {
-    navigate('/create_contact')
-  }, [])
-
+const LandingPageView = ({
+  onSignIn,
+  onSignUp,
+  onSignOut,
+  user,
+  userName,
+}: LandingPageViewProps) => {
   return (
-    <Box sx={{ width: 500 }}>
-      <BottomNavigation showLabels>
-        <BottomNavigationAction
-          className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Customer Services" icon={<ConnectWithoutContactIcon />}
-          onClick={() => window.open('https://t.me/dich_vu_nhap_hang_bot', '_blank')}
-        />
-        <BottomNavigationAction
-          className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Contact" icon={<ContactsIcon />}
-          onClick={onChangeContact}
-        />
-        <BottomNavigationAction
-          className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Cart" icon={<ShoppingCartCheckoutIcon />}
-          onClick={openSideBar}
-        />
-      </BottomNavigation>
+    <PopupLayout>
       <Box className="p-4">
+        <Typography className="mb-5 text-2xl font-bold text-center text-orange-500">
+          Dịch vụ nhập hàng Uy Tín
+        </Typography>
         <Paper elevation={3} className="p-3">
-          <Typography className="mb-5 text-2xl font-bold text-center text-orange-500">
-            Dịch vụ nhập hàng Uy Tín
-          </Typography>
+          {user && (
+            <Stack direction="row" className="justify-between">
+              <Typography className="mb-5 text-2xl font-bold text-orange-500">
+                Xin chào, {userName}
+              </Typography>
+              <Typography
+                className="mb-5 text-gray-500 underline cursor-pointer underline-offset-4"
+                onClick={onSignOut}
+              >
+                Thoát
+              </Typography>
+            </Stack>
+          )}
           <img src="https://via.placeholder.com/500x200" alt="placeholder" className="w-full h-[200px] mb-5 rounded-lg" />
-          <Stack>
-            <Button className="w-full" gradientDuoTone="pinkToOrange">Đăng ký</Button>
-          </Stack>
+          {!user && (
+            <Stack className="flex-row w-full space-x-4">
+              <Button className="w-full" gradientDuoTone="purpleToPink" onClick={onSignUp}>Đăng ký</Button>
+              <Button className="w-full" gradientDuoTone="pinkToOrange" onClick={onSignIn}>Đăng nhập</Button>
+            </Stack>
+          )}
         </Paper>
       </Box>
-    </Box>
+    </PopupLayout>
   )
 }
 

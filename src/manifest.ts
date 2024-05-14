@@ -19,8 +19,8 @@ let manifest = {
     default_popup: 'popup.html',
     default_icon: 'img/logo-64.png',
   },
-  options_page: 'options.html',
-  devtools_page: 'devtools.html',
+  // options_page: 'options.html',
+  // devtools_page: 'devtools.html',
   background: {
     service_worker: 'src/background/index.ts',
   },
@@ -41,7 +41,7 @@ let manifest = {
   ],
   permissions: ['sidePanel', 'storage'],
   chrome_url_overrides: {
-    newtab: 'newtab.html',
+    // newtab: 'newtab.html',
   },
 }
 

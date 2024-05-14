@@ -5,7 +5,12 @@ import alias from '@rollup/plugin-alias'
 import { resolve } from 'path'
 import manifest from './src/manifest'
 const projectRootDir = resolve(__dirname);
+import dotenv from "dotenv"
+dotenv.config();
 
+const { BACKEND_DOMAIN } = process.env;
+
+dotenv.config();
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
@@ -25,7 +30,11 @@ export default defineConfig(({ mode }) => {
         port: 5173,
       },
     },
-
+    define: {
+      "process.env": JSON.stringify({
+        BACKEND_DOMAIN,
+      })
+    },
     plugins: [
       crx({ manifest }),
       react({

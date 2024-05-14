@@ -1,5 +1,5 @@
-import { Product } from "@/models/product"
-import { useCallback, useEffect, useState } from "react"
+import { Product } from '@/models/product'
+import { useCallback, useEffect, useState } from 'react'
 
 const useProduct = () => {
   const [products, setProducts] = useState<Product[]>([])
@@ -29,7 +29,7 @@ const useProduct = () => {
 
   useEffect(() => {
     getProducts()
-  }, [])
+  }, [getProducts])
 
   return {
     getProducts,
