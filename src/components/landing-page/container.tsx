@@ -1,39 +1,18 @@
-import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
+import MainContext from '@/contexts/main-context'
 import View from './view'
-import { useCallback, useMemo } from 'react'
-import useCustomer from '@/hooks/use-customer'
 
 const LandingPageContainer = () => {
-  const navigate = useNavigate()
   const {
-    userInfo,
-    signOut,
-    refetchUserInfo,
-  } = useCustomer()
-
-  const onSignIn = useCallback(() => {
-    navigate('/sign_in')
-  }, [navigate])
-
-  const onSignUp = useCallback(() => {
-    navigate('/sign_up')
-  }, [navigate])
-
-  const onSignOut = useCallback(() => {
-    signOut()
-    refetchUserInfo()
-  }, [refetchUserInfo, signOut])
-
-  const userName = useMemo(() => {
-    return `${userInfo?.attributes?.first_name} ${userInfo?.attributes?.last_name}`
-  }, [userInfo])
+    isLogged,
+    userName,
+    onSignOut,
+  } = useContext(MainContext)
 
   const computedProps = {
-    onSignIn,
-    onSignUp,
-    onSignOut,
-    user: userInfo,
+    isLogged,
     userName,
+    onSignOut,
   }
 
   return <View {...computedProps} />

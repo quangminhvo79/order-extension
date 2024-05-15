@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ProvinceData from './contact.json'
 
 import View from './view'
-import useContact from '@/hooks/use-contact'
+// import useContact from '@/hooks/use-contact'
 import { useNavigate } from 'react-router-dom'
+import useAddress from '@/hooks/use-address'
 
 type Province = {
   name: string,
@@ -32,49 +33,63 @@ type Ward = {
 }
 
 const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
-  const [province, setProvince] = useState<string>()
+  const [address1, setAddress1] = useState<string>()
+  const [address2, setAddress2] = useState<string>()
+  const [companyName, setCompanyName] = useState<string>()
+  const [firstname, setFirstname] = useState<string>()
+  const [lastname, setLastname] = useState<string>()
+  const [city, setCity] = useState<string>()
+  const [phone, setPhone] = useState<number>()
+  const [zipcode, setZipcode] = useState<string>()
+  const [countryIso, setCountryIso] = useState<string>()
+  const [label, setLabel] = useState<string>()
+  const [note, setNote] = useState<string>()
   const [district, setDistrict] = useState<string>()
   const [ward, setWard] = useState<string>()
-  const [address, setAddress] = useState<string>()
-  const [recipient, setRecipient] = useState<string>()
-  const [phone, setPhone] = useState<string>()
-  const [note, setNote] = useState<string>()
+  const [error, setError] = useState<string>()
+
   const formRef = useRef<HTMLFormElement>(null)
-  const { saveContact, contact } = useContact()
+  const {
+    addresses,
+    createAddress,
+    updateAddress,
+  } = useAddress()
+
+  const address = useMemo(() => addresses && addresses[0], [addresses])
   const navigate = useNavigate()
 
-  const getDistrict = useCallback((province: string) => {
-    const selectedProvince = ProvinceData.find((data: Province) => data.name === province) as Province
+  const getDistrict = useCallback((city: string) => {
+    const selectedProvince = ProvinceData.find((data: Province) => data.name === city) as Province
     return selectedProvince ? selectedProvince.districts.map((district) => district.name) : []
   }, [])
 
-  const getWard = useCallback((province: string, district: string) => {
-    const selectedProvince = ProvinceData.find((data: Province) => data.name === province) as Province
+  const getWard = useCallback((city: string, district: string) => {
+    const selectedProvince = ProvinceData.find((data: Province) => data.name === city) as Province
     const selectedDistrict = selectedProvince?.districts.find((data: District) => data.name === district) as District
     return selectedDistrict ? selectedDistrict.wards.map((ward: Ward) => ward.name) : []
   }, [])
 
-  const provinces = useMemo(() => {
-    return ProvinceData.map((province: Province) => province.name)
+  const cities = useMemo(() => {
+    return ProvinceData.map((city: Province) => city.name)
   }, [])
 
   const districts = useMemo(() => {
-    if (province) {
-      const _district = getDistrict(province)
+    if (city) {
+      const _district = getDistrict(city)
       if (!district) setDistrict(_district[0])
 
       return _district
     }
     return null
-  }, [district, getDistrict, province])
+  }, [district, getDistrict, city])
 
   const wards = useMemo(() => {
     let _wards
 
-    if (province && district) {
-      _wards = getWard(province, district)
-    } else if (province && districts && districts.length > 0) {
-      _wards = getWard(province, districts[0])
+    if (city && district) {
+      _wards = getWard(city, district)
+    } else if (city && districts && districts.length > 0) {
+      _wards = getWard(city, districts[0])
     }
 
     if (_wards) {
@@ -83,62 +98,113 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
     }
 
     return null
-  }, [province, district, districts, getWard, ward])
+  }, [city, district, districts, getWard, ward])
 
-  const onSubmit = useCallback(() => {
-    if (formRef.current?.checkValidity()) {
-      saveContact({
-        province,
-        district,
-        ward,
-        address,
-        recipient,
-        phone,
-        note,
-      })
+  const buildAddress = useMemo(() => {
+    if (!firstname || !lastname || !address1 || !city || !phone || !district) return null
 
-      if (newWindow) {
-        chrome.windows.getCurrent((currentWindow) => {
-          if (currentWindow.id) chrome.windows.remove(currentWindow.id)
-        })
-      } else {
-        navigate('/')
-      }
+    return {
+      firstname,
+      lastname,
+      company: companyName,
+      address1: [address1, ward].filter(Boolean).join(', '),
+      address2,
+      city,
+      phone,
+      state_name: district,
+      country_iso: 'VN',
+      label,
+      zipcode: 650000,
+      note,
     }
-  }, [address, district, navigate, newWindow, note, phone, province, recipient, saveContact, ward])
+  }, [
+    address1,
+    address2,
+    city,
+    companyName,
+    district,
+    firstname,
+    label,
+    lastname,
+    phone,
+    ward,
+    note,
+  ])
+
+  const [invalid, setInvalid] = useState(false)
+
+  const onSubmit = useCallback(async () => {
+    if (formRef.current?.checkValidity() && buildAddress) {
+      console.log('buildAddress', buildAddress)
+      console.log('addresses', addresses)
+      let response = null
+      if (Boolean(addresses.length)) {
+        response = await updateAddress(buildAddress, addresses[0].id)
+      } else {
+        response = await createAddress(buildAddress)
+      }
+
+      console.log('response', response)
+      if (response?.statusCode === 401) setError('Vui lòng đăng nhập để thực hiện chức năng này')
+    } else {
+      setInvalid(true)
+    }
+  }, [addresses, buildAddress, createAddress, updateAddress])
+
+  const onBack = useCallback(() => {
+    navigate('/')
+  }, [navigate])
 
   useEffect(() => {
-    if (contact) {
-      setProvince(contact.province)
-      setDistrict(contact.district)
-      setWard(contact.ward)
-      setAddress(contact.address)
-      setRecipient(contact.recipient)
-      setPhone(contact.phone)
-      setNote(contact.note)
+    if (address) {
+      setAddress1(address.attributes.address1)
+      setAddress2(address.attributes.address2)
+      setCompanyName(address.attributes.company)
+      setFirstname(address.attributes.firstname)
+      setLastname(address.attributes.lastname)
+      setCity(address.attributes.city)
+      setPhone(address.attributes.phone)
+      setZipcode(address.attributes.zipcode)
+      setDistrict(address.attributes.state_name)
+      setCountryIso(address.attributes.country_iso)
+      setLabel(address.attributes.label)
+      setNote(address.attributes.note)
     }
-  }, [contact])
+  }, [address])
 
   const computedProps = {
-    provinces,
+    cities,
     districts,
     wards,
-    province,
+    city,
     district,
     ward,
-    setProvince,
+    firstname,
+    lastname,
+    address1,
+    address2,
+    phone,
+    companyName,
+    zipcode,
+    countryIso,
+    label,
+    note,
+    setAddress1,
+    setAddress2,
+    setFirstname,
+    setLastname,
+    setCompanyName,
+    setLabel,
+    setPhone,
+    setCity,
     setDistrict,
     setWard,
-    address,
-    recipient,
-    phone,
-    note,
-    setAddress,
-    setRecipient,
-    setPhone,
     setNote,
     onSubmit,
+    onBack,
     formRef,
+    invalid,
+    error,
   }
 
   return <View {...computedProps}/>

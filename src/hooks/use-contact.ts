@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from 'react'
 import { Contact } from '@/models/contact'
 
 const useContact = () => {
@@ -36,4 +36,4 @@ const useContact = () => {
   }
 }
 
-export default useContact;
+export default useContact
