@@ -44,7 +44,7 @@ const CreateOrderBtnContainer = (props: { market: string }) => {
 
     saveProducts(newProducts)
     onSuccess()
-  }, [onExistData, onSuccess, props.market])
+  }, [crawlData, getProducts, onExistData, onSuccess, props.market, saveProducts])
 
   const computedProps = {
     onSubmit,

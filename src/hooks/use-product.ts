@@ -21,7 +21,7 @@ const useProduct = () => {
   }, [])
 
   const calcProductTotalPrice = useCallback((product: Product) => {
-    if (product.salePrice && Number(product.salePrice) > 0)
+    if (product.salePrice.length && Number(product.salePrice) > 0)
       return Number(product.salePrice) * Number(product.qty)
 
     return Number(product.price) * Number(product.qty)

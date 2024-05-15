@@ -15,7 +15,7 @@ type ProductProps = {
   onChangeQty: (productId: string, qty: number) => void
 }
 
-const Product = ({
+const ProductInfo = ({
   product,
   onRemoveProduct,
   onCheckboxChange,
@@ -44,10 +44,10 @@ const Product = ({
               <Stack>
                 <Typography className="text-wrap">{product.name}</Typography>
                 <Stack direction="row" className="mt-2 space-x-1">
-                  {product.sku.map((sku) => (
-                    <span key={sku}
+                  {product.variants.activeItems.map((variant) => (
+                    <span key={variant}
                       className="text-sm text-gray-800 dark:text-gray-400 rounded border border-gray-300 px-2 py-1 cursor-default max-w-[200px] text-ellipsis overflow-hidden">
-                      {sku}
+                      {variant}
                     </span>
                   ))}
                 </Stack>
@@ -60,7 +60,7 @@ const Product = ({
       <Table.Cell>
         <Stack className="flex-col min-w-[100px] w-fit">
           <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * BasePrice)}</Typography>
-          {Boolean(product.salePrice) && (
+          {Boolean(product.salePrice.length) && (
             <Typography className="text-orange-500 whitespace-nowrap">
               <span>Sau Giảm Giá: </span>
               <span className="font-bold text-orange-500">{ formatPrice(Number(product.salePrice) * BasePrice )} đ</span>
@@ -103,17 +103,20 @@ const Product = ({
       <Table.Cell>
         <Stack className="flex-col">
           <Typography className={ cls('whitespace-nowrap', {
-            'font-bold text-black': !Boolean(product.salePrice),
-            'text-gray-400 line-through': Boolean(product.salePrice),
+            'font-bold text-black': !Boolean(product.salePrice.length),
+            'text-gray-400 line-through': Boolean(product.salePrice.length),
           }) }>
             { formatPrice(BasePrice * Number(product.price) * Number(product.qty)) }
           </Typography>
-          {Boolean(product.salePrice) && (
+          {Boolean(product.salePrice.length) && (
             <Typography className="font-bold text-orange-500 whitespace-nowrap">{ formatPrice(BasePrice * Number(product.salePrice) * Number(product.qty)) }</Typography>
           )}
         </Stack>
       </Table.Cell>
       <Table.Cell>
+        <Button color="light" size="md" className="me-2" onClick={ () => console.log(product) }>
+          Tạo
+        </Button>
         <Button color="light" size="md" onClick={() => onRemoveProduct(product.id)}>
           Xóa
         </Button>
@@ -122,4 +125,4 @@ const Product = ({
   )
 }
 
-export default Product
+export default ProductInfo

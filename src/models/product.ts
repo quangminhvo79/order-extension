@@ -6,7 +6,11 @@ export type Product = {
   image: string,
   video: string,
   qty: string | number,
-  sku: string[],
+  variants: {
+    categoriesText: string[],
+    allItems: string[],
+    activeItems: string[],
+  },
   link: string
   service: string[]
   shopLink: string,

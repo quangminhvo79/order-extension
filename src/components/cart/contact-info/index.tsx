@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import {  Button, Table } from 'flowbite-react'
-import { Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import useAddress from '@/hooks/use-address'
 
@@ -54,7 +54,7 @@ const ContactInfo = () => {
           </Typography>
           <Stack className="flex-row items-center ml-2 space-x-5">
             {address && (
-              <Typography className="text-black">
+              <Box className="text-black">
                 <span className="font-bold">{address.attributes.firstname} {address.attributes.lastname} -- {address.attributes.phone}</span>
                 <Typography className="space-x-1">
                   <span>{address.attributes.address1},</span>
@@ -63,7 +63,7 @@ const ContactInfo = () => {
                   <span>{address.attributes.city},</span>
                   <span>{address.attributes.country_iso}</span>
                 </Typography>
-              </Typography>
+              </Box>
             )}
             <Button color="light" className="text-sky-600 border-sky-600" size="md" onClick={onChangeContact}>Thay đổi</Button>
           </Stack>

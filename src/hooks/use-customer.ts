@@ -41,8 +41,6 @@ const useCustomer = () => {
   })
 
   const isLogged = useMemo(() => {
-    console.log('authData', authData)
-    console.log('user', user)
     return authData && user
   }, [authData, user])
 

@@ -71,7 +71,7 @@ const CartView = ({
                     onChangeQty={onChangeQty}
                   />
                 ))}
-                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Row key={`${orderByShop.shopId}_row`} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell className="w-10 font-medium text-orange-500 whitespace-nowrap dark:text-white bg-slate-100" colSpan={6}></Table.Cell>
                 </Table.Row>
               </>

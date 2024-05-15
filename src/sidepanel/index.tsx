@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Box } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { MainProvider } from '@/contexts/main-context'
+import { SidePanelProvider } from '@/contexts/sidepanel-context'
 import Header from '@/components/header'
 import Timeline from '@/components/timeline'
 
@@ -17,13 +17,13 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <MainProvider>
+      <SidePanelProvider>
         <Box className="p-5 space-y-5">
           <Header />
           <Timeline />
           <Cart />
         </Box>
-      </MainProvider>
+      </SidePanelProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 )

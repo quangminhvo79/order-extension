@@ -55,6 +55,7 @@ module.exports = defineConfig({
     'testing-library/no-node-access': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/semi': ['error', 'never'],
+    '@typescript-eslint/no-explicit-any': 'off',
   },
   settings: {
     'import/parsers': {
