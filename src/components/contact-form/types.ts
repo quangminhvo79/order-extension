@@ -33,5 +33,4 @@ export type ContactFormViewType = {
   onBack: () => void
   formRef: React.RefObject<HTMLFormElement>
   invalid: boolean
-  error?: string
 }

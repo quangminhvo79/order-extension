@@ -3,6 +3,7 @@ import { HashRouter } from 'react-router-dom'
 import RootNavigations from '@/pages/RootNavigations'
 import PopupLayout from '@/layouts/popup_layout'
 import { MainProvider } from '@/contexts/main-context'
+import { ToastContainer } from 'react-toastify'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, gcTime: Infinity } },
@@ -15,6 +16,7 @@ const App = () => {
         <MainProvider>
           <PopupLayout>
             <RootNavigations />
+            <ToastContainer />
           </PopupLayout>
         </MainProvider>
       </HashRouter>

@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import ProvinceData from './contact.json'
 
 import View from './view'
-// import useContact from '@/hooks/use-contact'
 import { useNavigate } from 'react-router-dom'
 import useAddress from '@/hooks/use-address'
+import MainContext from '@/contexts/main-context'
 
 type Province = {
   name: string,
@@ -46,16 +46,19 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
   const [note, setNote] = useState<string>()
   const [district, setDistrict] = useState<string>()
   const [ward, setWard] = useState<string>()
-  const [error, setError] = useState<string>()
 
   const formRef = useRef<HTMLFormElement>(null)
   const {
-    addresses,
+    address,
     createAddress,
     updateAddress,
   } = useAddress()
 
-  const address = useMemo(() => addresses && addresses[0], [addresses])
+  const {
+    showToastSuccess,
+    showToastError,
+  } = useContext(MainContext)
+
   const navigate = useNavigate()
 
   const getDistrict = useCallback((city: string) => {
@@ -75,30 +78,30 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
 
   const districts = useMemo(() => {
     if (city) {
-      const _district = getDistrict(city)
-      if (!district) setDistrict(_district[0])
+      const _districts = getDistrict(city)
+      if (!district && !address) setDistrict(_districts[0])
 
-      return _district
+      return _districts
     }
     return null
-  }, [district, getDistrict, city])
+  }, [address, city, district, getDistrict])
 
   const wards = useMemo(() => {
     let _wards
 
     if (city && district) {
       _wards = getWard(city, district)
-    } else if (city && districts && districts.length > 0) {
+    } else if (city && districts && districts.length > 0 && !address) {
       _wards = getWard(city, districts[0])
     }
 
     if (_wards) {
-      if (!ward) setWard(_wards[0])
+      if (!ward && !address) setWard(_wards[0])
       return _wards
     }
 
     return null
-  }, [city, district, districts, getWard, ward])
+  }, [address, city, district, districts, getWard, ward])
 
   const buildAddress = useMemo(() => {
     if (!firstname || !lastname || !address1 || !city || !phone || !district) return null
@@ -107,11 +110,12 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
       firstname,
       lastname,
       company: companyName,
-      address1: [address1, ward].filter(Boolean).join(', '),
+      address1,
       address2,
       city,
       phone,
-      state_name: district,
+      district,
+      ward,
       country_iso: 'VN',
       label,
       zipcode: 650000,
@@ -135,21 +139,32 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
 
   const onSubmit = useCallback(async () => {
     if (formRef.current?.checkValidity() && buildAddress) {
-      console.log('buildAddress', buildAddress)
-      console.log('addresses', addresses)
       let response = null
-      if (Boolean(addresses.length)) {
-        response = await updateAddress(buildAddress, addresses[0].id)
+      if (Boolean(address)) {
+        response = await updateAddress(buildAddress, address.id)
       } else {
         response = await createAddress(buildAddress)
       }
 
-      console.log('response', response)
-      if (response?.statusCode === 401) setError('Vui lòng đăng nhập để thực hiện chức năng này')
+      if (response?.status === 401) {
+        showToastError('Vui lòng đăng nhập để thực hiện chức năng này')
+      }
+      if (response?.status === 200) {
+        showToastSuccess('Đã cập nhật địa chỉ')
+
+        if (newWindow) {
+          chrome.windows.getCurrent((currentWindow) => {
+            if (currentWindow.id) chrome.windows.remove(currentWindow.id)
+          })
+        } else {
+          navigate('/')
+        }
+      }
     } else {
       setInvalid(true)
+      showToastError('Vui lòng điền đầy đủ thông tin cần thiết')
     }
-  }, [addresses, buildAddress, createAddress, updateAddress])
+  }, [address, buildAddress, createAddress, navigate, newWindow, showToastError, showToastSuccess, updateAddress])
 
   const onBack = useCallback(() => {
     navigate('/')
@@ -165,7 +180,8 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
       setCity(address.attributes.city)
       setPhone(address.attributes.phone)
       setZipcode(address.attributes.zipcode)
-      setDistrict(address.attributes.state_name)
+      setDistrict(address.attributes.district)
+      setWard(address.attributes.ward)
       setCountryIso(address.attributes.country_iso)
       setLabel(address.attributes.label)
       setNote(address.attributes.note)
@@ -204,7 +220,6 @@ const ContactFormContainer = ({ newWindow }: { newWindow?: boolean }) => {
     onBack,
     formRef,
     invalid,
-    error,
   }
 
   return <View {...computedProps}/>

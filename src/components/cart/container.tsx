@@ -24,7 +24,7 @@ const CartContainer = () => {
     })).reduce((a: number, b: number) => a + b, 0) || 0
 
     return totalToken * BasePrice
-  }, [cart, productSelected])
+  }, [calcProductTotalPrice, cart, productSelected])
 
   const buildCart = useCallback(async (order: Product[]) => {
     if (!isEmpty(order)) {
@@ -64,7 +64,7 @@ const CartContainer = () => {
     }
 
     fetchData()
-  }, [buildCart])
+  }, [buildCart, getProducts, removeAllProducts, saveProducts])
 
   const onClearAll = useCallback(() => {
     setCart(undefined)
@@ -137,7 +137,7 @@ const CartContainer = () => {
       buildCart(products)
       saveProducts(products)
     }
-  }, [buildCart])
+  }, [buildCart, getProducts, saveProducts])
 
   const decreaseQty = useCallback(async (productId: string) => {
     const products = await getProducts()
@@ -147,7 +147,7 @@ const CartContainer = () => {
       buildCart(products)
       saveProducts(products)
     }
-  }, [buildCart])
+  }, [buildCart, getProducts, saveProducts])
 
   const onChangeQty = useCallback(async (productId: string, qty: number) => {
     const products = await getProducts()
@@ -157,7 +157,7 @@ const CartContainer = () => {
       buildCart(products)
       chrome.storage.sync.set(products)
     }
-  }, [buildCart])
+  }, [buildCart, getProducts])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -166,7 +166,7 @@ const CartContainer = () => {
     }
 
     fetchData()
-  }, [buildCart])
+  }, [buildCart, getProducts])
 
   const computedProps = {
     cart,

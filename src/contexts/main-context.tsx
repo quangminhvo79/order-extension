@@ -5,6 +5,7 @@ import {
   useCallback,
 } from 'react'
 import useCustomer from '@/hooks/use-customer'
+import { Bounce, toast } from 'react-toastify'
 
 type MainContextType = {
   user: object
@@ -13,6 +14,8 @@ type MainContextType = {
   onSignOut: () => void
   userName?: string
   onSignIn: (email: string, password: string, callback?: () => void) => void
+  showToastSuccess: (message: string) => void
+  showToastError: (message: string) => void
 }
 
 const initContextState: MainContextType = {
@@ -22,6 +25,8 @@ const initContextState: MainContextType = {
   userName: undefined,
   onSignOut: () => true,
   onSignIn: () => true,
+  showToastSuccess: (message: string) => true,
+  showToastError: (message: string) => true,
 }
 
 const MainContext = createContext<MainContextType>(initContextState)
@@ -47,7 +52,23 @@ export const MainProvider = ({ children }: PropsWithChildren) => {
         callback?.()
       }
     })
-  }, [refetchUserInfo, signIn])
+  }, [signIn])
+
+  const showToastSuccess = useCallback((message: string) => {
+    toast.success(message, {
+      autoClose: 5000,
+      theme: 'light',
+      transition: Bounce,
+    })
+  }, [])
+
+  const showToastError = useCallback((message: string) => {
+    toast.error(message, {
+      autoClose: 5000,
+      theme: 'light',
+      transition: Bounce,
+    })
+  }, [])
 
   const userName = useMemo(() => {
     return `${user?.attributes?.first_name} ${user?.attributes?.last_name}`
@@ -61,6 +82,8 @@ export const MainProvider = ({ children }: PropsWithChildren) => {
       onSignOut,
       userName,
       onSignIn,
+      showToastSuccess,
+      showToastError,
     }
   }, [
     isLogged,
@@ -69,6 +92,8 @@ export const MainProvider = ({ children }: PropsWithChildren) => {
     userName,
     onSignOut,
     onSignIn,
+    showToastSuccess,
+    showToastError,
   ])
 
   return (

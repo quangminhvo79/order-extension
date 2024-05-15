@@ -26,12 +26,13 @@ export type CreateAddress = {
   address2?: string
   city: string
   phone: number
-  state_name: string
   zipcode?: number
   company?: string
   label?: string
   country_iso: string
   note?: string
+  district?: string
+  ward?: string
 }
 
 export type UpdateAddress = {
@@ -41,10 +42,11 @@ export type UpdateAddress = {
   address2?: string
   city: string
   phone: number
-  state_name: string
   zipcode?: number
   company?: string
   label?: string
   country_iso: string
   note?: string
+  district?: string
+  ward?: string
 }

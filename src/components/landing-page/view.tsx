@@ -10,6 +10,7 @@ const LandingPageView = ({
   userName,
   isLogged,
 }: LandingPageViewProps) => {
+
   return (
     <Box className="p-4">
       <Typography className="mb-5 text-2xl font-bold text-center text-orange-500">

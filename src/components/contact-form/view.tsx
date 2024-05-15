@@ -32,17 +32,11 @@ const ContactFormView = ({
   onSubmit,
   onBack,
   invalid,
-  error,
 }: ContactFormViewType) => {
 
   return (
     <Box className="p-4">
       <Typography className="px-3 py-2 mb-5 text-2xl font-bold text-white bg-gray-600 rounded-lg">Địa chỉ nhận hàng</Typography>
-      {error && (
-        <Typography className="mb-3 text-center text-red-500">
-          {error}
-        </Typography>
-      )}
       <form className="flex flex-col max-w-md gap-4" ref={formRef}>
         <div>
           <div className="block mb-2">
