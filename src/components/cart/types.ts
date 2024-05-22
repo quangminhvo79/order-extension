@@ -13,7 +13,7 @@ export type CartViewProps = {
   onRemoveProduct: (productId: string) => void
   onClearAll: () => void
   totalCash?: number
-  productSelected: string[] | undefined
+  productIdsSelected: string[] | undefined
   onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>, productId: string) => void
   onCheckAllByShop: (event: React.ChangeEvent<HTMLInputElement>, shopId: string) => void
   onCheckAll: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -26,4 +26,5 @@ export type CartViewProps = {
   increaseQty: (productId: string) => void
   decreaseQty: (productId: string) => void
   onChangeQty: (productId: string, qty: number) => void
+  onCreateOrderRequest: () => void
 }

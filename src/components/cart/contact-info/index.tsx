@@ -3,6 +3,7 @@ import {  Button, Table } from 'flowbite-react'
 import { Box, Stack, Typography } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import useAddress from '@/hooks/use-address'
+import { RELOAD_SHIPPING_ADDRESS } from '@/utils/constants'
 
 const ContactInfo = () => {
   const {
@@ -37,8 +38,9 @@ const ContactInfo = () => {
   }, [])
 
   useEffect(() => {
+    chrome.runtime.onMessage.removeListener(() => true)
     chrome.runtime.onMessage.addListener(async (request) => {
-      if (request.action === 'RELOAD_CONTACT_INFO') {
+      if (request.action === RELOAD_SHIPPING_ADDRESS) {
         refetchAddresses()
       }
     })

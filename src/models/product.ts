@@ -16,4 +16,6 @@ export type Product = {
   shopLink: string,
   shopName: string,
   shopId: string,
+  sku?: string,
+  market: string,
 }

@@ -9,7 +9,7 @@ type ProductProps = {
   product: Product,
   onRemoveProduct: (productId: string) => void
   onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>, productId: string) => void
-  productSelected?: string[]
+  productIdsSelected?: string[]
   increaseQty: (productId: string) => void
   decreaseQty: (productId: string) => void
   onChangeQty: (productId: string, qty: number) => void
@@ -19,14 +19,14 @@ const ProductInfo = ({
   product,
   onRemoveProduct,
   onCheckboxChange,
-  productSelected,
+  productIdsSelected,
   increaseQty,
   decreaseQty,
   onChangeQty,
 }: ProductProps) => {
   const checked = useMemo(() => {
-    return productSelected?.includes(product.id)
-  }, [product.id, productSelected])
+    return productIdsSelected?.includes(product.id)
+  }, [product.id, productIdsSelected])
 
   return (
     <Table.Row key={product.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -34,21 +34,30 @@ const ProductInfo = ({
         <Checkbox onChange={(event) => onCheckboxChange(event, product.id)} checked={checked}/>
       </Table.Cell>
       <Table.Cell className="w-10 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        <Stack className="flex-row space-x-4">
+        <Stack className="flex-row items-center space-x-4">
           <Stack className="w-[120px]">
-            {product.image && <img srcSet={product.image} src={product.image} alt={product.name} loading="lazy" className="max-w-fit" />}
-            {product.video && <video src={product.video} className="max-w-fit" />}
+            {product.image ? (
+              <img srcSet={product.image} src={product.image} alt={product.name} loading="lazy" className="max-w-fit" />
+            ) : (
+              product.video ? <video src={product.video} controls className="max-w-fit" /> : ''
+            )}
           </Stack>
           <Stack className="min-w-[240px]">
             <Link href={product.link} target="_blank" className="text-orange-500">
               <Stack>
                 <Typography className="text-wrap">{product.name}</Typography>
-                <Stack direction="row" className="mt-2 space-x-1">
-                  {product.variants.activeItems.map((variant) => (
-                    <span key={variant}
-                      className="text-sm text-gray-800 dark:text-gray-400 rounded border border-gray-300 px-2 py-1 cursor-default max-w-[200px] text-ellipsis overflow-hidden">
-                      {variant}
-                    </span>
+                <Stack className="mt-2 space-x-1">
+                  {product.variants.activeItems.map((variant, index) => (
+                    <Typography key={index} className="grid grid-cols-2 gap-2">
+                      <span key={product.variants.categoriesText[index]}
+                        className="font-bold text-sm text-gray-800 dark:text-gray-400 rounded cursor-default max-w-[200px] text-ellipsis overflow-hidden">
+                        {product.variants.categoriesText[index]}
+                      </span>
+                      <span key={variant}
+                        className="text-sm text-gray-800 dark:text-gray-400 rounded border border-gray-300 px-2 py-1 cursor-default max-w-[200px] text-ellipsis overflow-hidden">
+                        {variant}
+                      </span>
+                    </Typography>
                   ))}
                 </Stack>
                 {product.id}
@@ -60,7 +69,7 @@ const ProductInfo = ({
       <Table.Cell>
         <Stack className="flex-col min-w-[100px] w-fit">
           <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * BasePrice)}</Typography>
-          {Boolean(product.salePrice.length) && (
+          {Boolean(product.salePrice) && (
             <Typography className="text-orange-500 whitespace-nowrap">
               <span>Sau Giảm Giá: </span>
               <span className="font-bold text-orange-500">{ formatPrice(Number(product.salePrice) * BasePrice )} đ</span>
@@ -103,12 +112,12 @@ const ProductInfo = ({
       <Table.Cell>
         <Stack className="flex-col">
           <Typography className={ cls('whitespace-nowrap', {
-            'font-bold text-black': !Boolean(product.salePrice.length),
-            'text-gray-400 line-through': Boolean(product.salePrice.length),
+            'font-bold text-black': !Boolean(product.salePrice),
+            'text-gray-400 line-through': Boolean(product.salePrice),
           }) }>
             { formatPrice(BasePrice * Number(product.price) * Number(product.qty)) }
           </Typography>
-          {Boolean(product.salePrice.length) && (
+          {Boolean(product.salePrice) && (
             <Typography className="font-bold text-orange-500 whitespace-nowrap">{ formatPrice(BasePrice * Number(product.salePrice) * Number(product.qty)) }</Typography>
           )}
         </Stack>

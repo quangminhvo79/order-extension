@@ -9,6 +9,7 @@ import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import HowToRegIcon from '@mui/icons-material/HowToReg'
 import MainContext from '@/contexts/main-context'
+import { OPEN_CART_PAGE } from '@/utils/constants'
 
 const PopupHeaderMenus = () => {
   const navigate = useNavigate()
@@ -18,7 +19,7 @@ const PopupHeaderMenus = () => {
   } = useContext(MainContext)
 
   const openSideBar = useCallback(() => {
-    chrome.runtime.sendMessage({ action: 'openSidebar' })
+    chrome.runtime.sendMessage({ action: OPEN_CART_PAGE })
     const currentWindow = chrome.extension.getViews({ type: 'popup' })[0]
     currentWindow.close()
   }, [])

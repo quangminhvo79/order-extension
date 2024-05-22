@@ -9,22 +9,33 @@ import { ItemByShopType } from './types'
 import View from './view'
 import { BasePrice } from '@/utils/helpers'
 import useProduct from '@/hooks/use-product'
+import { useQuery } from '@tanstack/react-query'
+import { RELOAD_CART } from '@/utils/constants'
+import useOrderRequest from '@/hooks/use-order-request'
+import { toast } from 'react-toastify'
 
 const CartContainer = () => {
   const [cart, setCart] = useState<ItemByShopType[]>()
-  const [productSelected, setProductSelected] = useState<string[]>([])
+  const [productIdsSelected, setProductIdsSelected] = useState<string[]>([])
   const [openDepositDialog, setOpenDepositDialog] = useState(false)
   const { getProducts, removeAllProducts, saveProducts, calcProductTotalPrice } = useProduct()
+  const {
+    createOrderRequest,
+  } = useOrderRequest()
+
+  const productsSelectedData = useMemo(() => {
+    return cart?.flatMap((item) => item.items.filter((product) => productIdsSelected.includes(product.id)))
+  }, [cart, productIdsSelected])
 
   const totalCash = useMemo(() => {
-    if (!productSelected.length) return 0
+    if (!productIdsSelected.length) return 0
 
     const totalToken = cart?.flatMap((item) => item.items.map((product) => {
-      return productSelected.includes(product.id) ? calcProductTotalPrice(product) : 0
+      return productIdsSelected.includes(product.id) ? calcProductTotalPrice(product) : 0
     })).reduce((a: number, b: number) => a + b, 0) || 0
 
     return totalToken * BasePrice
-  }, [calcProductTotalPrice, cart, productSelected])
+  }, [calcProductTotalPrice, cart, productIdsSelected])
 
   const buildCart = useCallback(async (order: Product[]) => {
     if (!isEmpty(order)) {
@@ -68,12 +79,12 @@ const CartContainer = () => {
 
   const onClearAll = useCallback(() => {
     setCart(undefined)
-    setProductSelected([])
+    setProductIdsSelected([])
     removeAllProducts()
-  }, [])
+  }, [removeAllProducts])
 
   const addProductToCheckoutList = useCallback((productId: string) => {
-    setProductSelected((prevState) => {
+    setProductIdsSelected((prevState) => {
       if (prevState) {
         return prevState.includes(productId) ? [...prevState] : [...prevState, productId]
       }
@@ -82,7 +93,7 @@ const CartContainer = () => {
   }, [])
 
   const removeProductFromCheckoutList = useCallback((productId: string) => {
-    setProductSelected((prevState) => {
+    setProductIdsSelected((prevState) => {
       if (prevState) {
         return prevState.filter((id) => id !== productId)
       }
@@ -107,8 +118,8 @@ const CartContainer = () => {
   }, [addProductToCheckoutList, cart, removeProductFromCheckoutList])
 
   const allItemChecked = useMemo(() => {
-    return productSelected?.length === cart?.flatMap((item) => item.items.map((product) => product.id)).length
-  }, [cart, productSelected?.length])
+    return productIdsSelected?.length === cart?.flatMap((item) => item.items.map((product) => product.id)).length
+  }, [cart, productIdsSelected?.length])
 
   const allItemByShopChecked = useMemo(() => {
     const initialValue = {}
@@ -116,10 +127,10 @@ const CartContainer = () => {
     return cart.reduce((acc, shop) => {
       return {
         ...acc,
-        [shop.shopId]: productSelected.some(productId => includes(shop.items.map(item => item.id), productId) ),
+        [shop.shopId]: productIdsSelected.some(productId => includes(shop.items.map(item => item.id), productId) ),
       }
     }, initialValue)
-  }, [cart, productSelected])
+  }, [cart, productIdsSelected])
 
   const onCheckAllByShop = useCallback((event: React.ChangeEvent<HTMLInputElement>, shopId: string) => {
     if (event.target.checked) {
@@ -159,21 +170,51 @@ const CartContainer = () => {
     }
   }, [buildCart, getProducts])
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const { refetch: refetchCart } = useQuery({
+    queryKey: ['cart'],
+    queryFn: async () => {
       const products = await getProducts()
       buildCart(products)
+      return true
+    },
+    refetchOnWindowFocus: false,
+  })
+
+  useEffect(() => {
+    chrome.runtime.onMessage.removeListener(() => true)
+    chrome.runtime.onMessage.addListener(async (request) => {
+      if (request.action === RELOAD_CART) {
+        refetchCart()
+      }
+    })
+  }, [refetchCart])
+
+  const onCreateOrderRequest = useCallback(async () => {
+    console.log('create order request', productsSelectedData)
+    if (!productsSelectedData) return
+
+    const response = await createOrderRequest(productsSelectedData)
+    console.log('response', response)
+    if (response.status === 200) {
+      toast.success('Tạo order thành công', {
+        autoClose: 5000,
+        theme: 'light',
+      })
+    } else {
+      toast.error(response.data.error || response.data.message, {
+        autoClose: 5000,
+        theme: 'light',
+      })
     }
 
-    fetchData()
-  }, [buildCart, getProducts])
+  }, [productsSelectedData, createOrderRequest])
 
   const computedProps = {
     cart,
     onRemoveProduct,
     onClearAll,
     totalCash,
-    productSelected,
+    productIdsSelected,
     onCheckboxChange,
     onCheckAll,
     onCheckAllByShop,
@@ -184,6 +225,7 @@ const CartContainer = () => {
     increaseQty,
     decreaseQty,
     onChangeQty,
+    onCreateOrderRequest,
   }
 
   return <View {...computedProps} />

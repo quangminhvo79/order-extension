@@ -1,8 +1,9 @@
-import { useCallback } from "react"
+import { OPEN_CART_PAGE } from '@/utils/constants'
+import { useCallback } from 'react'
 
 const SuccessToastMessage = () => {
   const onClose = useCallback(() => {
-    chrome.runtime.sendMessage({ action: 'openSidebar' })
+    chrome.runtime.sendMessage({ action: OPEN_CART_PAGE })
   }, [])
 
   return (

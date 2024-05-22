@@ -6,7 +6,6 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ProductInfo from './product-info'
 import Shop from './shop'
 import ContactRow from './contact-info'
-import DepositDialog from './deposit'
 import { formatPrice } from '@/utils/helpers'
 
 const CartView = ({
@@ -14,7 +13,7 @@ const CartView = ({
   onRemoveProduct,
   onClearAll,
   totalCash,
-  productSelected,
+  productIdsSelected,
   onCheckboxChange,
   onCheckAllByShop,
   onCheckAll,
@@ -25,9 +24,10 @@ const CartView = ({
   increaseQty,
   decreaseQty,
   onChangeQty,
+  onCreateOrderRequest,
 }: CartViewProps) => {
 
-  const totalCashText = `Tổng thanh toán (${productSelected?.length} sản phẩm): `
+  const totalCashText = `Tổng thanh toán (${productIdsSelected?.length} sản phẩm): `
 
   return (
     <Box className="w-full p-4">
@@ -56,7 +56,7 @@ const CartView = ({
           </Table.Head>
 
           <Table.Body className="divide-y">
-            {cart && cart.map(orderByShop => (
+            {cart && cart.map((orderByShop) => (
               <>
                 <Shop key={orderByShop.shopId} orderByShop={orderByShop} onCheckAllByShop={onCheckAllByShop} checked={allItemByShopChecked[orderByShop.shopId]}/>
                 {orderByShop.items && orderByShop.items.map((product) => (
@@ -65,7 +65,7 @@ const CartView = ({
                     product={product}
                     onRemoveProduct={onRemoveProduct}
                     onCheckboxChange={onCheckboxChange}
-                    productSelected={productSelected}
+                    productIdsSelected={productIdsSelected}
                     increaseQty={increaseQty}
                     decreaseQty={decreaseQty}
                     onChangeQty={onChangeQty}
@@ -87,7 +87,7 @@ const CartView = ({
                   </Typography>
                   <Button
                     color="light" size="md" className="text-orange-500 border-orange-300"
-                    onClick={() => setOpenDepositDialog(true)}
+                    onClick={onCreateOrderRequest}
                     disabled={!totalCash || totalCash === 0}
                   >
                     Đặt cọc
@@ -97,7 +97,6 @@ const CartView = ({
             </Table.Row>
           </Table.Body>
         </Table>
-        <DepositDialog isOpened={openDepositDialog} setOpen={setOpenDepositDialog} />
       </Box>
     </Box>
   )

@@ -2,14 +2,9 @@ import { useCallback, useMemo } from 'react'
 import { CreateAddress, UpdateAddress } from '@/models/address'
 import { storefrontAPI } from '@/utils/api'
 import { ADDRESS_ROUTE } from '@/utils/api_routes'
-import useCustomer from './use-customer'
+import useCustomer, { errorResponseUnauthorized } from './use-customer'
 import { useQuery } from '@tanstack/react-query'
-
-const errorResponseUnauthorized = {
-  error: 'Unauthorized',
-  statusText: 'error',
-  status: 401,
-}
+import { RELOAD_SHIPPING_ADDRESS } from '@/utils/constants'
 
 const useAddress = () => {
   const {
@@ -78,7 +73,7 @@ const useAddress = () => {
         },
       )
 
-      chrome.runtime.sendMessage({ action: 'RELOAD_CONTACT_INFO' })
+      chrome.runtime.sendMessage({ action: RELOAD_SHIPPING_ADDRESS })
       refetchAddresses()
       callback?.()
       return response

@@ -1,8 +1,9 @@
+import { OPEN_CART_PAGE } from '@/utils/constants'
 import { useCallback } from 'react'
 
 const ExistToastMessage = () => {
   const onCloseExistToast = useCallback(() => {
-    chrome.runtime.sendMessage({ action: 'openSidebar' })
+    chrome.runtime.sendMessage({ action: OPEN_CART_PAGE })
   }, [])
 
   return (

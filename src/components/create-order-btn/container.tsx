@@ -8,6 +8,7 @@ import findKey from 'lodash/findKey'
 import SuccessToastMessage from './create-success'
 import ExistToastMessage from './product-existed'
 import useProduct from '@/hooks/use-product'
+import { RELOAD_CART } from '@/utils/constants'
 
 const CreateOrderBtnContainer = (props: { market: string }) => {
   const { crawlData } = useCrawlData()
@@ -15,15 +16,28 @@ const CreateOrderBtnContainer = (props: { market: string }) => {
 
   const onSuccess = useCallback(() => {
     toast.success(<SuccessToastMessage />, {
-      autoClose: 10000,
+      autoClose: 5000,
+      theme: 'light',
+      transition: Bounce,
+    })
+    chrome.runtime.sendMessage({ action: RELOAD_CART })
+  }, [])
+
+  const onExistData = useCallback(() => {
+    toast.error(<ExistToastMessage />, {
+      autoClose: 5000,
       theme: 'light',
       transition: Bounce,
     })
   }, [])
 
-  const onExistData = useCallback(() => {
-    toast.error(<ExistToastMessage />, {
-      autoClose: false,
+  const onInvalidProduct = useCallback(() => {
+    toast.error((
+      <div className="relative font-['tahoma']">
+        <p>Vui lòng chọn loại sản phẩm</p>
+      </div>
+    ), {
+      autoClose: 5000,
       theme: 'light',
       transition: Bounce,
     })
@@ -31,20 +45,24 @@ const CreateOrderBtnContainer = (props: { market: string }) => {
 
   const onSubmit = useCallback(async () => {
     const data = crawlData(props.market)
-    const currentProducts = await getProducts()
+    if (data) {
+      const currentProducts = await getProducts()
 
-    if (!data) return
-    const newProducts = isEmpty(currentProducts) ? [data] : [...currentProducts, data]
+      if (!data) return
+      const newProducts = isEmpty(currentProducts) ? [data] : [...currentProducts, data]
 
-    if (!isEmpty(currentProducts) && findKey(currentProducts, { id: data.id })) {
+      if (!isEmpty(currentProducts) && findKey(currentProducts, { id: data.id })) {
 
-      onExistData()
-      return
+        onExistData()
+        return
+      }
+
+      saveProducts(newProducts)
+      onSuccess()
+    } else {
+      onInvalidProduct()
     }
-
-    saveProducts(newProducts)
-    onSuccess()
-  }, [crawlData, getProducts, onExistData, onSuccess, props.market, saveProducts])
+  }, [crawlData, getProducts, onExistData, onInvalidProduct, onSuccess, props.market, saveProducts])
 
   const computedProps = {
     onSubmit,

@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material'
-import { Button, Label, TextInput } from 'flowbite-react'
+import { Button, Label, Spinner, TextInput } from 'flowbite-react'
 import { RegisterFormViewProps } from './types'
 
 const RegisterFormView = ({
@@ -14,6 +14,7 @@ const RegisterFormView = ({
   setFirstName,
   lastName,
   setLastName,
+  isRegistering,
 }: RegisterFormViewProps) => {
   return (
     <Box className="p-2">
@@ -70,7 +71,13 @@ const RegisterFormView = ({
           />
         </div>
         <Stack className="flex-row w-full space-x-4">
-          <Button gradientDuoTone="purpleToBlue" className="w-full" type="button" onClick={onSubmit}>Đăng ký</Button>
+          {isRegistering ? (
+            <Button color="gray" className="w-full">
+              <Spinner aria-label="Alternate spinner button example" size="sm" />
+            </Button>
+          ) : (
+            <Button gradientDuoTone="purpleToBlue" className="w-full" type="button" onClick={onSubmit}>Đăng ký</Button>
+          )}
           <Button gradientDuoTone="cyanToBlue" className="w-full" type="button" onClick={onBack}>Trang chủ</Button>
         </Stack>
       </form>

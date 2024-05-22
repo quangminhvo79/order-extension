@@ -8,6 +8,7 @@ const config: { [key: string]: any } = {
     price: ['SecurityPrice--priceText--', 'Price--priceText--'],
     salePrice: ['Price--extraPriceText--'],
     image: ['PicGallery--mainPic--'],
+    activeThumbnail: ['[class*="PicGallery--active--"] img'],
     video: ['video.lib-video'],
     quantity: ['countValueForPC'],
     service: ['.skuServiceItemWrapper .skuServiceUniqItem.selectedService'],
@@ -21,12 +22,14 @@ const config: { [key: string]: any } = {
       item: ['.skuItem'],
       activeItem: ['.skuItem.current .skuValueName'],
     },
+    skuId: 'skuId',
   },
   tmall: {
     name: ['ItemHeader--mainTitle--'],
     price: ['SecurityPrice--priceText--', 'Price--priceText--'],
     salePrice: ['Price--extraPriceText--'],
     image: ['PicGallery--mainPic--'],
+    activeThumbnail: ['[class*="PicGallery--active--"] img'],
     video: ['video.lib-video'],
     quantity: ['countValueForPC'],
     service: ['.skuServiceItemWrapper .skuServiceUniqItem.selectedService'],
@@ -40,6 +43,7 @@ const config: { [key: string]: any } = {
       item: ['.skuItem'],
       activeItem: ['.skuItem.current .skuValueName'],
     },
+    skuId: 'skuId',
   },
 }
 
@@ -89,46 +93,72 @@ const useCrawlData = () => {
     }
   }, [getAllDataFromClassName])
 
+  const getImages = useCallback((classNames: string[]) => {
+    const elements = flattenDeep(classNames.map((className: string) => {
+      return document.querySelectorAll(className)
+    }).filter((element: any) => element))[0]
+
+    return Array.from(elements).map((element: any) => {
+      return element.src.replace('110x10000', '')
+    })
+  }, [])
+
   const crawlData = (config_name: string) => {
     if (document) {
       const crawlTags = config[config_name]
 
-      const name = getDataFromRelativePath(crawlTags.name, 'textContent')
-      const price = getDataFromRelativePath(crawlTags.price, 'textContent')
-      const salePrice = getDataFromRelativePath(crawlTags.salePrice, 'textContent')
-      const image = getDataFromRelativePath(crawlTags.image, 'src')
-      const video = getDataFromRelativePath(crawlTags.video, 'src')
-      const quantity = getDataFromRelativePath(crawlTags.quantity, 'value')
       const variants = getAllVariants(crawlTags.variants)
-      const service = getAllDataFromClassName(crawlTags.service, 'textContent')
-      const shopName = getDataFromRelativePath(crawlTags.shopName, 'textContent')
-      const shopLink = getDataFromRelativePath(crawlTags.shopLink, 'href')[0]
-      const shopId = new URL(shopLink).host.split('.')[0]
 
-      const productId = compact(crawlTags.id.map((id: string) => {
-        return new URLSearchParams(document.location.search).get(id)
-      }))[0]
+      const {
+        categoriesText,
+        activeItems,
+      } = variants
 
-      return {
-        id: productId,
-        name,
-        price,
-        salePrice,
-        image: image || '',
-        video: video,
-        qty: quantity,
-        variants,
-        link: document.location.href,
-        service,
-        shopName,
-        shopLink,
-        shopId,
+      if (categoriesText.length === activeItems.length) {
+        const name = getDataFromRelativePath(crawlTags.name, 'textContent')[0]
+        const price = getDataFromRelativePath(crawlTags.price, 'textContent')[0]
+        const salePrice = getDataFromRelativePath(crawlTags.salePrice, 'textContent')[0]
+        const image = getDataFromRelativePath(crawlTags.image, 'src').concat(getImages(crawlTags.activeThumbnail))[0]
+        const video = getAllDataFromClassName(crawlTags.video, 'src')[0]
+        const quantity = getDataFromRelativePath(crawlTags.quantity, 'value')[0]
+        const service = getAllDataFromClassName(crawlTags.service, 'textContent')
+        const shopName = getDataFromRelativePath(crawlTags.shopName, 'textContent')[0]
+        const shopLink = getDataFromRelativePath(crawlTags.shopLink, 'href')[0]
+        const shopId = new URL(shopLink).host.split('.')[0]
+        const sku = new URLSearchParams(document.location.search).get(crawlTags.skuId || 'skuId')
+        const productId = compact(crawlTags.id.map((id: string) => {
+          return new URLSearchParams(document.location.search).get(id)
+        }))[0]
+
+        const product = {
+          id: productId,
+          name,
+          price,
+          salePrice,
+          image: image || '',
+          video: video,
+          qty: quantity,
+          variants,
+          link: document.location.href,
+          service,
+          shopName,
+          shopLink,
+          shopId,
+          sku,
+          market: crawlTags.market,
+        }
+
+        return product
+      } else {
+        return null
       }
     }
-    return {}
+    return null
   }
 
-  return { crawlData }
+  return {
+    crawlData,
+  }
 }
 
 export default useCrawlData

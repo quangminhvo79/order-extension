@@ -4,6 +4,12 @@ import { storefrontAPI, authAPI } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
 import { ACCOUNT_ROUTE } from '@/utils/api_routes'
 
+export const errorResponseUnauthorized = {
+  error: 'Unauthorized',
+  statusText: 'error',
+  status: 401,
+}
+
 const useCustomer = () => {
   const {
     data: authData,
@@ -54,7 +60,7 @@ const useCustomer = () => {
     return customer.email && customer.password && customer.firstName && customer.lastName
   }, [])
 
-  const signIn = useCallback(async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string, callback?: () => void) => {
     if (!email || !password) return
     try {
       const response = await authAPI.post('/token', {
@@ -67,6 +73,7 @@ const useCustomer = () => {
         await saveAuthInfo(response.data)
         refetchAuthData()
         refetchUserInfo()
+        callback?.()
         return true
       }
 
@@ -77,7 +84,7 @@ const useCustomer = () => {
     }
   }, [refetchAuthData, refetchUserInfo, saveAuthInfo])
 
-  const createUser = useCallback(async (customer: CreateCustomer) => {
+  const createUser = useCallback(async (customer: CreateCustomer, callback?: () => void) => {
     if (!customer || !isValidCustomer(customer)) return
     try {
       const response = await storefrontAPI.post(ACCOUNT_ROUTE, {
@@ -91,7 +98,7 @@ const useCustomer = () => {
       })
 
       if (response.status === 200) {
-        signIn(customer.email, customer.password)
+        signIn(customer.email, customer.password, callback)
       }
 
       return response.statusText

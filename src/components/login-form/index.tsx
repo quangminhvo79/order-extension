@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material'
-import { Button, Label, TextInput } from 'flowbite-react'
+import { Button, Label, Spinner, TextInput } from 'flowbite-react'
 import { useNavigate } from 'react-router-dom'
 import { useCallback, useContext, useState } from 'react'
 import MainContext from '@/contexts/main-context'
@@ -12,8 +12,14 @@ export default function Component() {
     onSignIn,
   } = useContext(MainContext)
 
+  const [isLogging, setIsLogging] = useState(false)
+
   const onLogin = useCallback(async () => {
-    await onSignIn(email, password, () => { navigate('/') })
+    setIsLogging(true)
+    await onSignIn(email, password, () => {
+      setIsLogging(false)
+      navigate('/')
+    })
   }, [email, navigate, password, onSignIn])
 
   return (
@@ -45,7 +51,13 @@ export default function Component() {
           />
         </div>
         <Stack className="flex-row w-full space-x-4">
-          <Button gradientDuoTone="purpleToBlue" className="w-full" type="button" onClick={onLogin} >Đăng nhập</Button>
+          {isLogging ? (
+            <Button color="gray" className="w-full">
+              <Spinner aria-label="Alternate spinner button example" size="sm" />
+            </Button>
+          ) : (
+            <Button gradientDuoTone="purpleToBlue" className="w-full" type="button" onClick={onLogin} >Đăng nhập</Button>
+          )}
           <Button gradientDuoTone="cyanToBlue" className="w-full" type="button" onClick={ () => navigate('/') }>Trang chủ</Button>
         </Stack>
       </form>

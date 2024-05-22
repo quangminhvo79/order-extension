@@ -11,12 +11,17 @@ const RegisterFormContainer = () => {
   const [lastName, setLastName] = useState<string>('')
   const navigate = useNavigate()
   const { createUser } = useCustomer()
+  const [isRegistering, setIsRegistering] = useState(false)
 
   const onSubmit = useCallback(() => {
     if (formRef.current?.checkValidity()) {
-      createUser({ email, password, firstName, lastName })
+      setIsRegistering(true)
+      createUser({ email, password, firstName, lastName }, () => {
+        setIsRegistering(false)
+        navigate('/')
+      })
     }
-  }, [createUser, email, firstName, lastName, password])
+  }, [createUser, email, firstName, lastName, navigate, password])
 
   const onBack = useCallback(() => {
     navigate('/')
@@ -34,6 +39,7 @@ const RegisterFormContainer = () => {
     setFirstName,
     lastName,
     setLastName,
+    isRegistering,
   }
 
   return <View {...computedProps} />
