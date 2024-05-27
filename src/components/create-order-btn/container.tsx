@@ -9,10 +9,12 @@ import SuccessToastMessage from './create-success'
 import ExistToastMessage from './product-existed'
 import useProduct from '@/hooks/use-product'
 import { RELOAD_CART } from '@/utils/constants'
+import useExchangeRate from '@/hooks/use-exchange-rate'
 
 const CreateOrderBtnContainer = (props: { market: string }) => {
-  const { crawlData } = useCrawlData()
+  const { crawlData } = useCrawlData(props.market)
   const { getProducts, saveProducts } = useProduct()
+  const { rate } = useExchangeRate('CNY')
 
   const onSuccess = useCallback(() => {
     toast.success(<SuccessToastMessage />, {
@@ -44,12 +46,12 @@ const CreateOrderBtnContainer = (props: { market: string }) => {
   }, [])
 
   const onSubmit = useCallback(async () => {
-    const data = crawlData(props.market)
+    const data = crawlData()
     if (data) {
       const currentProducts = await getProducts()
 
       if (!data) return
-      const newProducts = isEmpty(currentProducts) ? [data] : [...currentProducts, data]
+      const newProducts = isEmpty(currentProducts) ? [{...data, rate}] : [...currentProducts, {...data, rate}]
 
       if (!isEmpty(currentProducts) && findKey(currentProducts, { id: data.id })) {
 

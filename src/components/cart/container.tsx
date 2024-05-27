@@ -7,21 +7,22 @@ import { type Product } from '@/models/product'
 import { ItemByShopType } from './types'
 
 import View from './view'
-import { BasePrice } from '@/utils/helpers'
 import useProduct from '@/hooks/use-product'
 import { useQuery } from '@tanstack/react-query'
 import { RELOAD_CART } from '@/utils/constants'
 import useOrderRequest from '@/hooks/use-order-request'
 import { toast } from 'react-toastify'
+import useExchangeRate from '@/hooks/use-exchange-rate'
 
 const CartContainer = () => {
   const [cart, setCart] = useState<ItemByShopType[]>()
   const [productIdsSelected, setProductIdsSelected] = useState<string[]>([])
-  const [openDepositDialog, setOpenDepositDialog] = useState(false)
+  // const [openDepositDialog, setOpenDepositDialog] = useState(false)
   const { getProducts, removeAllProducts, saveProducts, calcProductTotalPrice } = useProduct()
   const {
     createOrderRequest,
   } = useOrderRequest()
+  const { rate } = useExchangeRate('CNY')
 
   const productsSelectedData = useMemo(() => {
     return cart?.flatMap((item) => item.items.filter((product) => productIdsSelected.includes(product.id)))
@@ -34,7 +35,7 @@ const CartContainer = () => {
       return productIdsSelected.includes(product.id) ? calcProductTotalPrice(product) : 0
     })).reduce((a: number, b: number) => a + b, 0) || 0
 
-    return totalToken * BasePrice
+    return totalToken * rate
   }, [calcProductTotalPrice, cart, productIdsSelected])
 
   const buildCart = useCallback(async (order: Product[]) => {
@@ -190,11 +191,11 @@ const CartContainer = () => {
   }, [refetchCart])
 
   const onCreateOrderRequest = useCallback(async () => {
-    console.log('create order request', productsSelectedData)
+    // console.log('create order request', productsSelectedData)
     if (!productsSelectedData) return
 
     const response = await createOrderRequest(productsSelectedData)
-    console.log('response', response)
+    // console.log('response', response)
     if (response.status === 200) {
       toast.success('Tạo order thành công', {
         autoClose: 5000,
@@ -220,8 +221,6 @@ const CartContainer = () => {
     onCheckAllByShop,
     allItemChecked,
     allItemByShopChecked,
-    openDepositDialog,
-    setOpenDepositDialog,
     increaseQty,
     decreaseQty,
     onChangeQty,

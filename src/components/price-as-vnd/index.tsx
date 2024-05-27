@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Box } from '@mui/material'
 import usePolling from '@/hooks/use-polling'
-import { BasePrice, formatPrice } from '@/utils/helpers'
+import { formatPrice } from '@/utils/helpers'
+import useExchangeRate from '@/hooks/use-exchange-rate'
 
 const PriceAsVND = () => {
   const [price, setPrice] = useState(0)
+  const { rate } = useExchangeRate('CNY')
 
   const fetchPrice = useCallback((timeout = 0) => {
     setTimeout(() => {
@@ -25,7 +27,7 @@ const PriceAsVND = () => {
   }, [fetchPrice, price, stop])
 
   return (
-    <Box className="text-[2rem] text-orange-500">{ formatPrice(Number(price) * BasePrice)}</Box>
+    <Box className="text-[2rem] text-orange-500">{ formatPrice(Number(price) * rate)}</Box>
   )
 }
 

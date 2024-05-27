@@ -10,6 +10,13 @@ export const storefrontAPI = axios.create({
   },
 })
 
+export const api = axios.create({
+  baseURL: `${backendDomain}/api/v2`,
+  headers: {
+    'Content-type': 'application/json',
+  },
+})
+
 export const authAPI = axios.create({
   baseURL: `${backendDomain}/spree_oauth`,
   headers: {

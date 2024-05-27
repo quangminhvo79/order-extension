@@ -3,7 +3,8 @@ import { Link, Stack, Typography } from '@mui/material'
 import { Button, Checkbox, Table } from 'flowbite-react'
 import cls from 'classnames'
 import { useMemo } from 'react'
-import { BasePrice, formatPrice } from '@/utils/helpers'
+import { formatPrice } from '@/utils/helpers'
+import useExchangeRate from '@/hooks/use-exchange-rate'
 
 type ProductProps = {
   product: Product,
@@ -24,6 +25,8 @@ const ProductInfo = ({
   decreaseQty,
   onChangeQty,
 }: ProductProps) => {
+
+  const { rate } = useExchangeRate('CNY')
   const checked = useMemo(() => {
     return productIdsSelected?.includes(product.id)
   }, [product.id, productIdsSelected])
@@ -68,11 +71,11 @@ const ProductInfo = ({
       </Table.Cell>
       <Table.Cell>
         <Stack className="flex-col min-w-[100px] w-fit">
-          <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * BasePrice)}</Typography>
+          <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * rate)}</Typography>
           {Boolean(product.salePrice) && (
             <Typography className="text-orange-500 whitespace-nowrap">
               <span>Sau Giảm Giá: </span>
-              <span className="font-bold text-orange-500">{ formatPrice(Number(product.salePrice) * BasePrice )} đ</span>
+              <span className="font-bold text-orange-500">{ formatPrice(Number(product.salePrice) * rate )} đ</span>
             </Typography>
           )}
         </Stack>
@@ -115,17 +118,19 @@ const ProductInfo = ({
             'font-bold text-black': !Boolean(product.salePrice),
             'text-gray-400 line-through': Boolean(product.salePrice),
           }) }>
-            { formatPrice(BasePrice * Number(product.price) * Number(product.qty)) }
+            { formatPrice(rate * Number(product.price) * Number(product.qty)) }
           </Typography>
           {Boolean(product.salePrice) && (
-            <Typography className="font-bold text-orange-500 whitespace-nowrap">{ formatPrice(BasePrice * Number(product.salePrice) * Number(product.qty)) }</Typography>
+            <Typography className="font-bold text-orange-500 whitespace-nowrap">{ formatPrice(rate * Number(product.salePrice) * Number(product.qty)) }</Typography>
           )}
         </Stack>
       </Table.Cell>
       <Table.Cell>
-        <Button color="light" size="md" className="me-2" onClick={ () => console.log(product) }>
-          Tạo
-        </Button>
+        {false && (
+          <Button color="light" size="md" className="me-2" onClick={ () => console.log(product) }>
+            Tạo
+          </Button>
+        )}
         <Button color="light" size="md" onClick={() => onRemoveProduct(product.id)}>
           Xóa
         </Button>

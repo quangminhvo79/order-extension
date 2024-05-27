@@ -11,6 +11,7 @@ import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const marketWhiteList = ['item.taobao.com', 'detail.tmall.com']
 const marketMap: { [key: string]: string } = {
@@ -27,6 +28,11 @@ app.style.marginRight = '20px'
 app.id = 'create-order-btn'
 toastContainer.id = 'toast-container'
 
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { refetchOnWindowFocus: false, gcTime: Infinity } },
+})
+
+
 if (actionBtns && marketWhiteList.includes(document.location.hostname)) {
   if (!document.getElementById('create-order-btn')) {
     actionBtns.prepend(app)
@@ -36,7 +42,9 @@ if (actionBtns && marketWhiteList.includes(document.location.hostname)) {
 
   createRoot(document.getElementById('create-order-btn') as HTMLElement).render(
     <React.StrictMode>
-      <OrderButton market={marketMap[document.location.hostname.toString()]}/>
+      <QueryClientProvider client={queryClient}>
+        <OrderButton market={marketMap[document.location.hostname.toString()]}/>
+      </QueryClientProvider>
     </React.StrictMode>,
   )
 
@@ -69,7 +77,9 @@ const AddPriceTag = () => {
 
       createRoot(document.getElementById('price-in-vnd') as HTMLElement).render(
         <React.StrictMode>
-          <PriceAsVND />
+          <QueryClientProvider client={queryClient}>
+            <PriceAsVND />
+          </QueryClientProvider>
         </React.StrictMode>,
       )
     }

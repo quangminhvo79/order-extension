@@ -18,4 +18,5 @@ export type Product = {
   shopId: string,
   sku?: string,
   market: string,
+  rate: string | number,
 }

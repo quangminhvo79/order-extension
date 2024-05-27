@@ -1,53 +1,20 @@
 import flattenDeep from 'lodash/flattenDeep'
 import compact from 'lodash/compact'
 import { useCallback } from 'react'
+import { api } from '@/utils/api'
+import { useQuery } from '@tanstack/react-query'
 
-const config: { [key: string]: any } = {
-  taobao: {
-    name: ['ItemHeader--mainTitle--'],
-    price: ['SecurityPrice--priceText--', 'Price--priceText--'],
-    salePrice: ['Price--extraPriceText--'],
-    image: ['PicGallery--mainPic--'],
-    activeThumbnail: ['[class*="PicGallery--active--"] img'],
-    video: ['video.lib-video'],
-    quantity: ['countValueForPC'],
-    service: ['.skuServiceItemWrapper .skuServiceUniqItem.selectedService'],
-    shopLink: ['ShopHeader--board--', 'ShopHeaderNew--detailWrap--'],
-    shopName: ['ShopHeader--title--', 'ShopHeaderNew--shopName--'],
-    market: 'taobao',
-    id: ['id', 'itemid'],
-    variants: {
-      category: ['.skuWrapper .skuCate'],
-      categoryText: ['.skuCateText'],
-      item: ['.skuItem'],
-      activeItem: ['.skuItem.current .skuValueName'],
+const useCrawlData = (config_name: string) => {
+  const { data: crawlTags } = useQuery({
+    queryKey: ['config-by-market'],
+    queryFn: async () => {
+      const { data } = await api.get('/crawler_selectors', { params: { market: config_name } })
+      return data.data.attributes
     },
-    skuId: 'skuId',
-  },
-  tmall: {
-    name: ['ItemHeader--mainTitle--'],
-    price: ['SecurityPrice--priceText--', 'Price--priceText--'],
-    salePrice: ['Price--extraPriceText--'],
-    image: ['PicGallery--mainPic--'],
-    activeThumbnail: ['[class*="PicGallery--active--"] img'],
-    video: ['video.lib-video'],
-    quantity: ['countValueForPC'],
-    service: ['.skuServiceItemWrapper .skuServiceUniqItem.selectedService'],
-    shopLink: ['ShopHeader--board--', 'ShopHeaderNew--detailWrap--'],
-    shopName: ['ShopHeader--title--', 'ShopHeaderNew--shopName--'],
-    market: 'tmall',
-    id: ['id', 'itemid'],
-    variants: {
-      category: ['.skuWrapper .skuCate'],
-      categoryText: ['.skuCateText'],
-      item: ['.skuItem'],
-      activeItem: ['.skuItem.current .skuValueName'],
-    },
-    skuId: 'skuId',
-  },
-}
+    refetchOnWindowFocus: false,
+    enabled: !!config_name,
+  })
 
-const useCrawlData = () => {
   const getDataFromRelativePath = useCallback((classNames: string[], attributeName?: string) => {
     const elements = flattenDeep(classNames.map((className: string) => {
       return document.querySelector(`[class*="${className}"]`)
@@ -103,10 +70,9 @@ const useCrawlData = () => {
     })
   }, [])
 
-  const crawlData = (config_name: string) => {
+  const crawlData = () => {
     if (document) {
-      const crawlTags = config[config_name]
-
+      console.log('crawlTags', crawlTags)
       const variants = getAllVariants(crawlTags.variants)
 
       const {
