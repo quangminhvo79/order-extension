@@ -11,7 +11,7 @@ import Timeline from '@/components/timeline'
 
 const CartView = ({
   cart,
-  onRemoveProduct,
+  onRemoveProducts,
   onClearAll,
   totalCash,
   productIdsSelected,
@@ -64,7 +64,7 @@ const CartView = ({
                     <ProductInfo
                       key={product.id}
                       product={product}
-                      onRemoveProduct={onRemoveProduct}
+                      onRemoveProducts={onRemoveProducts}
                       onCheckboxChange={onCheckboxChange}
                       productIdsSelected={productIdsSelected}
                       increaseQty={increaseQty}

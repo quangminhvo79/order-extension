@@ -64,7 +64,7 @@ const CreateOrderBtnContainer = (props: { market: string }) => {
     } else {
       onInvalidProduct()
     }
-  }, [crawlData, getProducts, onExistData, onInvalidProduct, onSuccess, props.market, saveProducts])
+  }, [crawlData, getProducts, onExistData, onInvalidProduct, onSuccess, rate, saveProducts])
 
   const computedProps = {
     onSubmit,

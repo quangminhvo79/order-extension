@@ -14,15 +14,15 @@ const SidepanelHeaderMenu = () => {
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
-          <Navbar.Link href="javascript:void(0)" onClick={() => navigate('/cart')}>
+          <Navbar.Link className="font-bold cursor-pointer" onClick={() => navigate('/cart')}>
             Giỏ hàng
           </Navbar.Link>
-          <Navbar.Link href="javascript:void(0)" onClick={() => navigate('/my_orders')}>
+          <Navbar.Link className="font-bold cursor-pointer" onClick={() => navigate('/my_orders')}>
             Đơn đã đặt
           </Navbar.Link>
-          <Navbar.Link href="#">Khiếu Nại</Navbar.Link>
-          <Navbar.Link href="#">Biểu Phí</Navbar.Link>
-          <Navbar.Link href="#">Hỗ Trợ</Navbar.Link>
+          <Navbar.Link className="font-bold cursor-pointer" href="#">Khiếu Nại</Navbar.Link>
+          <Navbar.Link className="font-bold cursor-pointer" href="#">Biểu Phí</Navbar.Link>
+          <Navbar.Link className="font-bold cursor-pointer" href="#">Hỗ Trợ</Navbar.Link>
         </Navbar.Collapse>
       </Navbar>
     </div>

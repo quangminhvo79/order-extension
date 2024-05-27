@@ -1,7 +1,12 @@
+import useMyOrders from '@/hooks/use-my-orders'
 import View from './view'
 
 const Container = () => {
-  return <View />
+  const {
+    orders,
+  } = useMyOrders()
+
+  return <View orders={orders} />
 }
 
 export default Container

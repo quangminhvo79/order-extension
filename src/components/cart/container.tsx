@@ -36,7 +36,7 @@ const CartContainer = () => {
     })).reduce((a: number, b: number) => a + b, 0) || 0
 
     return totalToken * rate
-  }, [calcProductTotalPrice, cart, productIdsSelected])
+  }, [calcProductTotalPrice, cart, productIdsSelected, rate])
 
   const buildCart = useCallback(async (order: Product[]) => {
     if (!isEmpty(order)) {
@@ -60,22 +60,19 @@ const CartContainer = () => {
     }
   }, [])
 
-  const onRemoveProduct = useCallback((productId: string) => {
-    const fetchData = async () => {
-      const products = await getProducts()
-      if (!products) return
-      const newProducts = products.filter((item: Product) => item.id !== productId)
+  const onRemoveProducts = useCallback(async (productIds: string[]) => {
+    const products = await getProducts()
+    if (!products) return
 
-      if (isEmpty(newProducts)) {
-        removeAllProducts()
-        setCart(undefined)
-      } else {
-        saveProducts(newProducts)
-        buildCart(newProducts)
-      }
+    const newProducts = products.filter((item: Product) => !productIds.includes(item.id))
+
+    if (isEmpty(newProducts)) {
+      removeAllProducts()
+      setCart(undefined)
+    } else {
+      saveProducts(newProducts)
+      buildCart(newProducts)
     }
-
-    fetchData()
   }, [buildCart, getProducts, removeAllProducts, saveProducts])
 
   const onClearAll = useCallback(() => {
@@ -193,10 +190,11 @@ const CartContainer = () => {
   const onCreateOrderRequest = useCallback(async () => {
     // console.log('create order request', productsSelectedData)
     if (!productsSelectedData) return
-
     const response = await createOrderRequest(productsSelectedData)
     // console.log('response', response)
     if (response.status === 200) {
+      onRemoveProducts(productIdsSelected)
+      setProductIdsSelected([])
       toast.success('Tạo order thành công', {
         autoClose: 5000,
         theme: 'light',
@@ -208,11 +206,11 @@ const CartContainer = () => {
       })
     }
 
-  }, [productsSelectedData, createOrderRequest])
+  }, [productsSelectedData, createOrderRequest, onRemoveProducts, productIdsSelected])
 
   const computedProps = {
     cart,
-    onRemoveProduct,
+    onRemoveProducts,
     onClearAll,
     totalCash,
     productIdsSelected,

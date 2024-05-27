@@ -32,7 +32,6 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, gcTime: Infinity } },
 })
 
-
 if (actionBtns && marketWhiteList.includes(document.location.hostname)) {
   if (!document.getElementById('create-order-btn')) {
     actionBtns.prepend(app)

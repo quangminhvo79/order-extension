@@ -8,7 +8,7 @@ import useExchangeRate from '@/hooks/use-exchange-rate'
 
 type ProductProps = {
   product: Product,
-  onRemoveProduct: (productId: string) => void
+  onRemoveProducts: (productId: string[]) => void
   onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>, productId: string) => void
   productIdsSelected?: string[]
   increaseQty: (productId: string) => void
@@ -18,7 +18,7 @@ type ProductProps = {
 
 const ProductInfo = ({
   product,
-  onRemoveProduct,
+  onRemoveProducts,
   onCheckboxChange,
   productIdsSelected,
   increaseQty,
@@ -126,12 +126,7 @@ const ProductInfo = ({
         </Stack>
       </Table.Cell>
       <Table.Cell>
-        {false && (
-          <Button color="light" size="md" className="me-2" onClick={ () => console.log(product) }>
-            Tạo
-          </Button>
-        )}
-        <Button color="light" size="md" onClick={() => onRemoveProduct(product.id)}>
+        <Button color="light" size="md" onClick={() => onRemoveProducts([product.id])}>
           Xóa
         </Button>
       </Table.Cell>

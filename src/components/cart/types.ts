@@ -1,5 +1,4 @@
 import { type Product } from '@/models/product'
-import { Dispatch, SetStateAction } from 'react'
 
 export type ItemByShopType = {
   shopName: string
@@ -10,7 +9,7 @@ export type ItemByShopType = {
 
 export type CartViewProps = {
   cart?: ItemByShopType[]
-  onRemoveProduct: (productId: string) => void
+  onRemoveProducts: (productId: string[]) => void
   onClearAll: () => void
   totalCash?: number
   productIdsSelected: string[] | undefined
