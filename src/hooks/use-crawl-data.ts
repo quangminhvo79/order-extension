@@ -1,8 +1,13 @@
 import flattenDeep from 'lodash/flattenDeep'
-import compact from 'lodash/compact'
 import { useCallback } from 'react'
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
+
+type CrawlFieldData = {
+  selector: string[],
+  query_type: 'class_relative' | 'exactly_match' | 'url_search_param',
+  selector_attribute: string,
+}
 
 const useCrawlData = (config_name: string) => {
   const { data: crawlTags } = useQuery({
@@ -16,63 +21,77 @@ const useCrawlData = (config_name: string) => {
   })
 
   const getDataFromRelativePath = useCallback((classNames: string[], attributeName?: string) => {
-    const elements = flattenDeep(classNames.map((className: string) => {
-      return document.querySelector(`[class*="${className}"]`)
-    })).filter((element: any) => element)
+    const elements = flattenDeep(
+      classNames.map((className: string) => {
+        return document.querySelector(`[class*="${className}"]`)
+      }),
+    ).filter((element: any) => element)
 
     return Array.from(elements).map((element: any) => attributeName ? (element[attributeName] as string) : element)
   }, [])
 
   const getAllDataFromClassName = useCallback((classNames: string[], attributeName?: string) => {
-    const elements = flattenDeep(classNames.map((className: string) => {
-      return document.querySelectorAll(className)
-    }).filter((element: any) => element))[0]
+    const elements = flattenDeep(
+      classNames.map((className: string) => {
+        return document.querySelectorAll(className)
+      })
+      .filter((element: any) => {
+        if ((element.constructor === NodeList) || (element.constructor === Array))
+          return element.length > 0
+        return element
+      }),
+    )[0]
+    if (!elements) return []
 
     return Array.from(elements).map((element: any) => {
       return attributeName ? element[attributeName] : element
     })
   }, [])
 
-  const getAllVariants = useCallback((variants: { category: string[], item: string[], activeItem: string[], categoryText: string[] }) => {
+  const getDataFromCrawlerField = useCallback((crawlerField: CrawlFieldData) => {
+    if (crawlerField.query_type === 'class_relative') {
+      return getDataFromRelativePath(crawlerField.selector, crawlerField.selector_attribute)
+    } else if (crawlerField.query_type === 'exactly_match') {
+      return getAllDataFromClassName(crawlerField.selector, crawlerField.selector_attribute)
+    } else if (crawlerField.query_type === 'url_search_param') {
+      return crawlerField.selector.map((selector: string) => {
+          return new URLSearchParams(document.location.search).get(selector)
+        })
+    }
+    return []
+  }, [getAllDataFromClassName, getDataFromRelativePath])
+
+  const getAllVariants = useCallback((
+    variants: {
+      category: CrawlFieldData,
+      item: CrawlFieldData,
+      activeItem: CrawlFieldData,
+      categoryText: CrawlFieldData,
+    },
+  ) => {
     // const variantsCategories = getAllDataFromClassName(variants.category)
-
-    const categoriesText = flattenDeep(variants.category.map((category: any) => {
-      return variants.categoryText.map((item: any) => {
-        return getAllDataFromClassName([`${category} ${item}`], 'textContent')
-      })
-    }))
-    const allItems = flattenDeep(variants.category.map((category: any) => {
-      return variants.item.map((item: any) => {
-        return getAllDataFromClassName([`${category} ${item}`], 'textContent')
-      })
-    }))
-    const activeItems = flattenDeep(variants.category.map((category: any) => {
-      return variants.activeItem.map((activeItem: any) => {
-        return getAllDataFromClassName([`${category} ${activeItem}`], 'textContent')
-      })
-    }))
-
+    const categoriesText = getDataFromCrawlerField(variants.categoryText)
+    const allItems = getDataFromCrawlerField(variants.item)
+    const activeItems = getDataFromCrawlerField(variants.activeItem)
     // eslint-disable-next-line no-console
     return {
       categoriesText,
       allItems,
       activeItems,
     }
-  }, [getAllDataFromClassName])
+  }, [getDataFromCrawlerField])
 
-  const getImages = useCallback((classNames: string[]) => {
-    const elements = flattenDeep(classNames.map((className: string) => {
-      return document.querySelectorAll(className)
-    }).filter((element: any) => element))[0]
+  const getImages = useCallback((crawlerField: CrawlFieldData) => {
+    const images = getDataFromCrawlerField(crawlerField)
 
-    return Array.from(elements).map((element: any) => {
-      return element.src.replace('110x10000', '')
-    })
-  }, [])
+    if (images && images.constructor === Array) {
+      return images.map((image: string) => image.replace('110x10000', ''))
+    }
+    return []
+  }, [getDataFromCrawlerField])
 
   const crawlData = () => {
     if (document) {
-      console.log('crawlTags', crawlTags)
       const variants = getAllVariants(crawlTags.variants)
 
       const {
@@ -80,21 +99,19 @@ const useCrawlData = (config_name: string) => {
         activeItems,
       } = variants
 
-      if (categoriesText.length === activeItems.length) {
-        const name = getDataFromRelativePath(crawlTags.name, 'textContent')[0]
-        const price = getDataFromRelativePath(crawlTags.price, 'textContent')[0]
-        const salePrice = getDataFromRelativePath(crawlTags.salePrice, 'textContent')[0]
-        const image = getDataFromRelativePath(crawlTags.image, 'src').concat(getImages(crawlTags.activeThumbnail))[0]
-        const video = getAllDataFromClassName(crawlTags.video, 'src')[0]
-        const quantity = getDataFromRelativePath(crawlTags.quantity, 'value')[0]
-        const service = getAllDataFromClassName(crawlTags.service, 'textContent')
-        const shopName = getDataFromRelativePath(crawlTags.shopName, 'textContent')[0]
-        const shopLink = getDataFromRelativePath(crawlTags.shopLink, 'href')[0]
-        const shopId = new URL(shopLink).host.split('.')[0]
-        const sku = new URLSearchParams(document.location.search).get(crawlTags.skuId || 'skuId')
-        const productId = compact(crawlTags.id.map((id: string) => {
-          return new URLSearchParams(document.location.search).get(id)
-        }))[0]
+      if (categoriesText && activeItems && (categoriesText.length === activeItems.length)) {
+        const name = getDataFromCrawlerField(crawlTags.name)[0]
+        const price = getDataFromCrawlerField(crawlTags.price)[0]
+        const salePrice = getDataFromCrawlerField(crawlTags.salePrice)[0]
+        const image = getDataFromCrawlerField(crawlTags.image).concat(getImages(crawlTags.activeThumbnail))[0]
+        const video = getDataFromCrawlerField(crawlTags.video)[0]
+        const quantity = getDataFromCrawlerField(crawlTags.quantity)[0]
+        const service = getDataFromCrawlerField(crawlTags.service)
+        const shopName = getDataFromCrawlerField(crawlTags.shopName)[0]
+        const shopLink = getDataFromCrawlerField(crawlTags.shopLink)[0]
+        const shopId = shopLink ? new URL(shopLink).host.split('.')[0] : ''
+        const sku = getDataFromCrawlerField(crawlTags.skuId)[0]
+        const productId = getDataFromCrawlerField(crawlTags.id)[0]
 
         const product = {
           id: productId,

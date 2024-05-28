@@ -1,5 +1,3 @@
-import { Button } from 'flowbite-react'
-
 const CreateOrderBtnView = ({
   onSubmit,
 }: {
@@ -7,9 +5,16 @@ const CreateOrderBtnView = ({
 }) => {
   return (
     <div>
-      <Button gradientMonochrome="failure" onClick={onSubmit} size="lg">
+      <button onClick={onSubmit} style={{
+        borderRadius: '5px',
+        background: '#ff693c',
+        color: 'white',
+        width: '128px',
+        fontSize: '16px',
+        padding: '8px 30px',
+      }}>
         Tạo Đơn
-      </Button>
+      </button>
     </div>
   )
 

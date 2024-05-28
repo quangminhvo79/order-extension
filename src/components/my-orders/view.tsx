@@ -5,8 +5,8 @@ import { Table } from 'flowbite-react'
 import { Product } from '@/models/product'
 import { formatPrice } from '@/utils/helpers'
 import cls from 'classnames'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 const View = ({ orders }: { orders: any[] }) => {
   const [orderSelected, setOrderSelected] = useState<string | undefined>('')

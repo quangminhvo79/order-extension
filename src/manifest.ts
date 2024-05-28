@@ -26,7 +26,7 @@ let manifest = {
   },
   content_scripts: [
     {
-      matches: ['https://item.taobao.com/*', 'https://detail.tmall.com/*'],
+      matches: ['https://*.item.taobao.com/*', 'https://*.detail.tmall.com/*', 'https://*.detail.1688.com/*'],
       js: ['src/contentScript/index.tsx'],
     },
   ],
