@@ -10,7 +10,7 @@ const PriceAsVND = () => {
 
   const fetchPrice = useCallback((timeout = 0) => {
     setTimeout(() => {
-      const priceText = document.querySelector('[class*="Price--priceText--"]')?.textContent
+      const priceText = document.querySelector('[class*="Price--priceText--"], .price-text')?.textContent
       setPrice( Number(priceText) )
     }, timeout)
   }, [])
@@ -27,7 +27,7 @@ const PriceAsVND = () => {
   }, [fetchPrice, price, stop])
 
   return (
-    <Box className="text-[2rem] text-orange-500">{ formatPrice(Number(price) * rate)}</Box>
+    <Box fontSize={32} className="text-orange-500 ">{ formatPrice(Number(price) * rate)}</Box>
   )
 }
 

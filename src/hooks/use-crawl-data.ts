@@ -5,8 +5,9 @@ import { useQuery } from '@tanstack/react-query'
 
 type CrawlFieldData = {
   selector: string[],
-  query_type: 'class_relative' | 'exactly_match' | 'url_search_param',
+  query_type: 'class_relative' | 'exactly_match' | 'url_search_param' | 'url_search_param_from_element' | 'window_variable',
   selector_attribute: string,
+  regex_pattern: string,
 }
 
 const useCrawlData = (config_name: string) => {
@@ -33,14 +34,14 @@ const useCrawlData = (config_name: string) => {
   const getAllDataFromClassName = useCallback((classNames: string[], attributeName?: string) => {
     const elements = flattenDeep(
       classNames.map((className: string) => {
-        return document.querySelectorAll(className)
-      })
-      .filter((element: any) => {
-        if ((element.constructor === NodeList) || (element.constructor === Array))
-          return element.length > 0
-        return element
+        return Array.from(document.querySelectorAll(className))
       }),
-    )[0]
+    ).filter((element: any) => {
+      if ((element.constructor === NodeList) || (element.constructor === Array))
+        return element.length > 0
+      return element
+    })
+
     if (!elements) return []
 
     return Array.from(elements).map((element: any) => {
@@ -57,7 +58,25 @@ const useCrawlData = (config_name: string) => {
       return crawlerField.selector.map((selector: string) => {
           return new URLSearchParams(document.location.search).get(selector)
         })
+    } else if (crawlerField.query_type === 'url_search_param_from_element') {
+      const element = document.querySelector(crawlerField.selector[0]) as HTMLElement
+      if (!element) return []
+
+      const searchParam = new URLSearchParams(
+        element.getAttribute(crawlerField.selector[1]) as string,
+      ).get(crawlerField.selector_attribute)
+
+      return searchParam ? [searchParam] : []
+    } else if (crawlerField.query_type === 'window_variable') {
+      let result = window
+      crawlerField.selector.forEach((item: string) => {
+        // @ts-ignore
+        result = result[item]
+      })
+
+      return [result]
     }
+
     return []
   }, [getAllDataFromClassName, getDataFromRelativePath])
 

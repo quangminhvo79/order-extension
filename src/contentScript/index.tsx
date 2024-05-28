@@ -22,7 +22,7 @@ const queryClient = new QueryClient({
 
 const handleAddPriceTag = () => {
   const AddPriceTag = () => {
-    const priceWrap = document.querySelector('[class*="Price--root--"]')
+    const priceWrap = document.querySelector('[class*="Price--root--"], .price-content')
     try {
       if (priceWrap) {
         if (!document.getElementById('price-in-vnd')) {
