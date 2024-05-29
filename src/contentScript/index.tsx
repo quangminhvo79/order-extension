@@ -20,9 +20,19 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, gcTime: Infinity } },
 })
 
-const handleAddPriceTag = () => {
+type SupportedMarket = {
+  name: string
+  code: string
+  crawler_paths: string[]
+  create_order_btn_container: string
+  price_tag_container: string
+  price_text: string
+}
+
+const handleAddPriceTag = (market: SupportedMarket) => {
   const AddPriceTag = () => {
-    const priceWrap = document.querySelector('[class*="Price--root--"], .price-content')
+
+    const priceWrap = document.querySelector(market.price_tag_container)
     try {
       if (priceWrap) {
         if (!document.getElementById('price-in-vnd')) {
@@ -37,7 +47,7 @@ const handleAddPriceTag = () => {
         createRoot(document.getElementById('price-in-vnd') as HTMLElement).render(
           <React.StrictMode>
             <QueryClientProvider client={queryClient}>
-              <PriceAsVND />
+              <PriceAsVND priceTextSelector={market.price_text}/>
             </QueryClientProvider>
           </React.StrictMode>,
         )
@@ -54,9 +64,8 @@ const handleAddPriceTag = () => {
 
 const handleAddCreateOrderBtn = (
   marketWhiteList: string[],
-  markets: { name: string, code: string, crawler_paths: string[] }[],
+  markets: SupportedMarket[],
 ) => {
-  const actionBtns = document.querySelector('[class*="Actions--root--"], .order-button-children-list')
   const app = document.createElement('div')
   const toastContainer = document.createElement('div')
 
@@ -67,6 +76,7 @@ const handleAddCreateOrderBtn = (
 
   const market = markets.find((m) => m.crawler_paths.find((i) => document.location.hostname.match(i)))
   const validMarket = marketWhiteList.find(i => document.location.host.match(i)) && market
+  const actionBtns = market ? document.querySelector(market?.create_order_btn_container) : null
 
   if (!actionBtns) {
     setTimeout(() => {
@@ -95,7 +105,7 @@ const handleAddCreateOrderBtn = (
       </React.StrictMode>,
     )
 
-    handleAddPriceTag()
+    handleAddPriceTag(market)
     // eslint-disable-next-line no-console
     console.info('Content Script: Order Extension Loaded')
   }

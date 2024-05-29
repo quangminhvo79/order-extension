@@ -4,16 +4,16 @@ import usePolling from '@/hooks/use-polling'
 import { formatPrice } from '@/utils/helpers'
 import useExchangeRate from '@/hooks/use-exchange-rate'
 
-const PriceAsVND = () => {
+const PriceAsVND = ({ priceTextSelector }: {priceTextSelector: string}) => {
   const [price, setPrice] = useState(0)
   const { rate } = useExchangeRate('CNY')
 
   const fetchPrice = useCallback((timeout = 0) => {
     setTimeout(() => {
-      const priceText = document.querySelector('[class*="Price--priceText--"], .price-text')?.textContent
+      const priceText = document.querySelector(priceTextSelector)?.textContent
       setPrice( Number(priceText) )
     }, timeout)
-  }, [])
+  }, [priceTextSelector])
 
   const { stop } = usePolling(fetchPrice, 1000)
 

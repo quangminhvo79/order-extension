@@ -171,7 +171,7 @@ const useCrawlData = (config_name: string) => {
         activeItems,
       } = variants
 
-      if (categoriesText && activeItems && (categoriesText.length === activeItems.length)) {
+      if (categoriesText && activeItems && (activeItems.length >= categoriesText.length)) {
         const name = getDataFromCrawlerField(crawlTags.name)[0]
         const price = getDataFromCrawlerField(crawlTags.price)[0]
         const salePrice = getDataFromCrawlerField(crawlTags.salePrice)[0]
