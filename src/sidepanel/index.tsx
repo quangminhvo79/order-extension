@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Box } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { SidePanelProvider } from '@/contexts/sidepanel-context'
+import { MainProvider } from '@/contexts/main-context'
 import Timeline from '@/components/timeline'
 
 import 'react-toastify/dist/ReactToastify.css'
@@ -21,12 +21,12 @@ ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <HashRouter>
-        <SidePanelProvider>
+        <MainProvider>
           <SidepanelLayout>
             <SidepanelNavigations />
             <ToastContainer transition={Bounce} />
           </SidepanelLayout>
-        </SidePanelProvider>
+        </MainProvider>
       </HashRouter>
     </QueryClientProvider>
   </React.StrictMode>,

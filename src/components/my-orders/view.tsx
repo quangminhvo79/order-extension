@@ -21,8 +21,8 @@ const View = ({ orders }: { orders: any[] }) => {
 
   return (
     <Box className="w-full p-4">
-      <Stack direction="row" alignItems="center" justifyContent="space-between" className="p-3 mb-4 bg-orange-100 border border-orange-300 rounded">
-        <Box className="space-x-2 text-2xl font-bold text-orange-500">
+      <Stack direction="row" alignItems="center" justifyContent="space-between" className="p-3 mb-4 bg-red-100 border border-red-300 rounded">
+        <Box className="space-x-2 text-2xl font-bold text-red-600">
           <CardGiftcardIcon />
           <span>Đơn đã đặt</span>
         </Box>
@@ -30,9 +30,10 @@ const View = ({ orders }: { orders: any[] }) => {
 
       <Box className="p-2 overflow-x-auto">
         <Table hoverable>
-          <Table.Head className="text-orange-500 border-b border-gray-400">
+          <Table.Head className="text-red-600 border-b border-gray-400">
             <Table.HeadCell className="bg-slate-100">Mã Đơn Hàng</Table.HeadCell>
             <Table.HeadCell className="bg-slate-100">Trạng Thái</Table.HeadCell>
+            <Table.HeadCell className="bg-slate-100">Mã vận đơn</Table.HeadCell>
             <Table.HeadCell className="bg-slate-100">Số tiền</Table.HeadCell>
             <Table.HeadCell className="bg-slate-100 w-[100px]">Ngày đặt hàng</Table.HeadCell>
           </Table.Head>
@@ -44,7 +45,7 @@ const View = ({ orders }: { orders: any[] }) => {
                   className="bg-white cursor-pointer dark:border-gray-700 dark:bg-gray-800"
                   onClick={ () => toggleExpanded(order.attributes.number) }
                 >
-                  <Table.Cell className="pl-3 font-medium text-orange-500 whitespace-nowrap dark:text-white">
+                  <Table.Cell className="pl-3 font-medium text-red-600 whitespace-nowrap dark:text-white">
                     <Typography>
                       {
                         order.attributes.number !== orderSelected ?
@@ -55,16 +56,27 @@ const View = ({ orders }: { orders: any[] }) => {
                     </Typography>
                   </Table.Cell>
 
-                  <Table.Cell className="font-medium text-orange-500 whitespace-nowrap dark:text-white">
+                  <Table.Cell className="font-medium text-red-600 whitespace-nowrap dark:text-white">
                     <Typography>
                       <span
-                        className="px-3 py-2 text-white bg-orange-400 border border-orange-600 rounded-full cursor-pointer" dangerouslySetInnerHTML={
+                        className="px-3 py-2 text-white bg-red-400 border border-red-600 rounded-full cursor-pointer" dangerouslySetInnerHTML={
                         {__html: order.attributes.process_state}
                       }></span>
                     </Typography>
                   </Table.Cell>
 
-                  <Table.Cell className="font-medium text-orange-500 whitespace-nowrap dark:text-white">
+                  <Table.Cell className="font-medium text-red-600 whitespace-nowrap dark:text-white">
+                    {order.attributes.domestic_shipping_code && (
+                      <Typography>
+                        <span
+                          className="px-3 py-2 text-white bg-red-400 border border-red-600 rounded-full cursor-pointer" dangerouslySetInnerHTML={
+                          {__html: order.attributes.domestic_shipping_code}
+                        }></span>
+                      </Typography>
+                    )}
+                  </Table.Cell>
+
+                  <Table.Cell className="font-medium text-red-600 whitespace-nowrap dark:text-white">
                     <Typography>
                       <span className="font-bold text-gray-700" dangerouslySetInnerHTML={
                         {__html: order.attributes.display_total}
@@ -72,7 +84,7 @@ const View = ({ orders }: { orders: any[] }) => {
                     </Typography>
                   </Table.Cell>
 
-                  <Table.Cell className="font-medium text-orange-500 whitespace-nowrap dark:text-white">
+                  <Table.Cell className="font-medium text-red-600 whitespace-nowrap dark:text-white">
                     <Typography>
                       <span className="text-gray-700 ">{order.attributes.created_at}</span>
                     </Typography>
@@ -95,7 +107,7 @@ const View = ({ orders }: { orders: any[] }) => {
                           )}
                         </Stack>
                         <Stack className="min-w-[240px]">
-                          <Link href={product.link} target="_blank" className="text-orange-500">
+                          <Link href={product.link} target="_blank" className="text-red-600">
                             <Stack>
                               <Typography className="text-wrap">{product.name}</Typography>
                               <Stack className="mt-2 space-x-1">
@@ -122,9 +134,9 @@ const View = ({ orders }: { orders: any[] }) => {
                       <Stack className="flex-col min-w-[100px] w-fit">
                         <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * Number(product.rate))}</Typography>
                         {Boolean(product.salePrice) && (
-                          <Typography className="text-orange-500 whitespace-nowrap">
+                          <Typography className="text-red-600 whitespace-nowrap">
                             <span>Sau Giảm Giá: </span>
-                            <span className="font-bold text-orange-500">{ formatPrice(Number(product.salePrice) * Number(product.rate))} đ</span>
+                            <span className="font-bold text-red-600">{ formatPrice(Number(product.salePrice) * Number(product.rate))} đ</span>
                           </Typography>
                         )}
                       </Stack>

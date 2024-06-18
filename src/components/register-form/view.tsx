@@ -15,10 +15,11 @@ const RegisterFormView = ({
   lastName,
   setLastName,
   isRegistering,
+  isGotoHome,
 }: RegisterFormViewProps) => {
   return (
     <Box className="p-2">
-      <form className="flex flex-col max-w-md gap-4" ref={formRef}>
+      <form className="flex flex-col gap-4" ref={formRef}>
         <div>
           <div className="block mb-2">
             <Label htmlFor="first_name" value="Họ" />
@@ -76,9 +77,10 @@ const RegisterFormView = ({
               <Spinner aria-label="Alternate spinner button example" size="sm" />
             </Button>
           ) : (
-            <Button gradientDuoTone="purpleToBlue" className="w-full" type="button" onClick={onSubmit}>Đăng ký</Button>
+            <Button gradientMonochrome="failure" className="w-full" type="button" onClick={onSubmit}>Đăng ký</Button>
           )}
-          <Button gradientDuoTone="cyanToBlue" className="w-full" type="button" onClick={onBack}>Trang chủ</Button>
+          { isGotoHome && <Button color="light" className="w-full" type="button" onClick={onBack}>Trang chủ</Button> }
+          { !isGotoHome && <Button color="light" className="w-full" type="button" onClick={onBack}>Đăng nhập</Button> }
         </Stack>
       </form>
     </Box>

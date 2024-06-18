@@ -46,7 +46,7 @@ const ProductInfo = ({
             )}
           </Stack>
           <Stack className="min-w-[240px]">
-            <Link href={product.link} target="_blank" className="text-orange-500">
+            <Link href={product.link} target="_blank" className="text-red-600">
               <Stack>
                 <Typography className="text-wrap">{product.name}</Typography>
                 <Stack className="mt-2 space-x-1">
@@ -73,9 +73,9 @@ const ProductInfo = ({
         <Stack className="flex-col min-w-[100px] w-fit">
           <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * rate)}</Typography>
           {Boolean(product.salePrice) && (
-            <Typography className="text-orange-500 whitespace-nowrap">
+            <Typography className="text-red-600 whitespace-nowrap">
               <span>Sau Giảm Giá: </span>
-              <span className="font-bold text-orange-500">{ formatPrice(Number(product.salePrice) * rate )} đ</span>
+              <span className="font-bold text-red-600">{ formatPrice(Number(product.salePrice) * rate )} đ</span>
             </Typography>
           )}
         </Stack>
@@ -121,7 +121,7 @@ const ProductInfo = ({
             { formatPrice(rate * Number(product.price) * Number(product.qty)) }
           </Typography>
           {Boolean(product.salePrice) && (
-            <Typography className="font-bold text-orange-500 whitespace-nowrap">{ formatPrice(rate * Number(product.salePrice) * Number(product.qty)) }</Typography>
+            <Typography className="font-bold text-red-600 whitespace-nowrap">{ formatPrice(rate * Number(product.salePrice) * Number(product.qty)) }</Typography>
           )}
         </Stack>
       </Table.Cell>

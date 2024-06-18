@@ -9,7 +9,7 @@ const ExistToastMessage = () => {
   return (
     <div className="relative font-['tahoma']">
       <p>Sản phẩm đã có trong giỏ hàng</p>
-      <p className="text-orange-400 cursor-pointer" onClick={onCloseExistToast}>
+      <p className="text-red-400 cursor-pointer" onClick={onCloseExistToast}>
         Đi đến giỏ hàng
       </p>
     </div>

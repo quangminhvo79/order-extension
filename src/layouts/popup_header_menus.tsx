@@ -39,36 +39,36 @@ const PopupHeaderMenus = () => {
   return (
     <BottomNavigation showLabels>
       <BottomNavigationAction
-        className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Tổng đài" icon={<ConnectWithoutContactIcon />}
-        onClick={() => window.open('https://t.me/dich_vu_nhap_hang_bot', '_blank')}
+        className="text-red-600 hover:text-red-700 hover:bg-red-200" label="Giá Vận Chuyển" icon={<ConnectWithoutContactIcon />}
+        onClick={() => window.open('https://www.facebook.com/share/p/Cp4PU5HrRwWFFYDv/?mibextid=WC7FNe', '_blank')}
       />
       {isLogged && (
         <BottomNavigationAction
-          className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Địa chỉ" icon={<ContactsIcon />}
+          className="text-red-600 hover:text-red-700 hover:bg-red-200" label="Địa chỉ" icon={<ContactsIcon />}
           onClick={onChangeContact}
         />
       )}
       {isLogged && (
         <BottomNavigationAction
-          className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Giỏ hàng" icon={<ShoppingCartCheckoutIcon />}
+          className="text-red-600 hover:text-red-700 hover:bg-red-200" label="Giỏ hàng" icon={<ShoppingCartCheckoutIcon />}
           onClick={openSideBar}
         />
       )}
       {isLogged && (
         <BottomNavigationAction
-          className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Đăng xuất" icon={<LogoutIcon />}
+          className="text-red-600 hover:text-red-700 hover:bg-red-200" label="Đăng xuất" icon={<LogoutIcon />}
           onClick={onSignOut}
         />
       )}
       {!isLogged && (
         <BottomNavigationAction
-          className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Đăng nhập" icon={<LoginIcon />}
+          className="text-red-600 hover:text-red-700 hover:bg-red-200" label="Đăng nhập" icon={<LoginIcon />}
           onClick={onSignIn}
         />
       )}
       {!isLogged && (
         <BottomNavigationAction
-          className="text-orange-500 hover:text-red-700 hover:bg-orange-200" label="Đăng ký" icon={<HowToRegIcon />}
+          className="text-red-600 hover:text-red-700 hover:bg-red-200" label="Đăng ký" icon={<HowToRegIcon />}
           onClick={onSignUp}
         />
       )}

@@ -48,9 +48,9 @@ const ContactInfo = () => {
 
   return (
     <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800" data-testid="contact-info">
-      <Table.Cell className="font-medium text-orange-500 whitespace-nowrap dark:text-white" colSpan={6} >
+      <Table.Cell className="font-medium text-red-600 whitespace-nowrap dark:text-white" colSpan={6} >
         <Stack className="flex-col items-start justify-start space-y-3">
-          <Typography className="space-x-1 font-semibold text-orange-500">
+          <Typography className="space-x-1 font-semibold text-red-600">
             <LocationOnIcon />
             <span>Địa chỉ nhận hàng</span>
           </Typography>

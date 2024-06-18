@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCallback, useContext, useState } from 'react'
 import MainContext from '@/contexts/main-context'
 
-export default function Component() {
+export default function Component({ isGotoHome = true } : { isGotoHome?: boolean }) {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,19 +13,25 @@ export default function Component() {
   } = useContext(MainContext)
 
   const [isLogging, setIsLogging] = useState(false)
+  const [error, setError] = useState('')
 
   const onLogin = useCallback(async () => {
     setIsLogging(true)
-    await onSignIn(email, password, () => {
+    setError('')
+    await onSignIn(email, password, (result: boolean) => {
       setIsLogging(false)
-      navigate('/')
+      if (result) {
+        navigate('/')
+      } else {
+        setError('Sai email hoặc mật khẩu')
+      }
     })
   }, [email, navigate, password, onSignIn])
 
   return (
     <Box className="p-2">
       {/* {customerLogged && customerLogged.email} */}
-      <form className="flex flex-col max-w-md gap-4">
+      <form className="flex flex-col gap-4">
         <div>
           <div className="block mb-2">
             <Label htmlFor="email1" value="Email" />
@@ -50,15 +56,17 @@ export default function Component() {
             required
           />
         </div>
+        { error && <div className="text-red-500">{error}</div> }
         <Stack className="flex-row w-full space-x-4">
           {isLogging ? (
             <Button color="gray" className="w-full">
               <Spinner aria-label="Alternate spinner button example" size="sm" />
             </Button>
           ) : (
-            <Button gradientDuoTone="purpleToBlue" className="w-full" type="button" onClick={onLogin} >Đăng nhập</Button>
+            <Button gradientMonochrome="failure" className="w-full" type="button" onClick={onLogin} >Đăng nhập</Button>
           )}
-          <Button gradientDuoTone="cyanToBlue" className="w-full" type="button" onClick={ () => navigate('/') }>Trang chủ</Button>
+          { isGotoHome && (<Button color="light" className="w-full" type="button" onClick={ () => navigate('/') }>Trang chủ</Button>) }
+          { !isGotoHome && (<Button color="light" className="w-full" type="button" onClick={ () => navigate('/register') }>Đăng ký</Button>) }
         </Stack>
       </form>
     </Box>

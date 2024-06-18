@@ -13,4 +13,5 @@ export type RegisterFormViewProps = {
   lastName: string
   setLastName: Dispatch<SetStateAction<string>>
   isRegistering: boolean
+  isGotoHome: boolean
 }

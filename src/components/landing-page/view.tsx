@@ -13,18 +13,18 @@ const LandingPageView = ({
 
   return (
     <Box className="p-4">
-      <Typography className="mb-5 text-2xl font-bold text-center text-orange-500">
-        Dịch vụ nhập hàng Uy Tín
-      </Typography>
       <Paper elevation={3} className="p-3">
         {isLogged && (
           <Stack direction="row" className="justify-between">
-            <Typography className="mb-5 text-2xl font-bold text-orange-500">
-              Xin chào, {userName}
+            <Typography className="mb-5 text-2xl font-bold text-red-600">
+              Xin chào {userName && <span>, {userName}</span>}
             </Typography>
           </Stack>
         )}
-        <img src="https://via.placeholder.com/500x200" alt="placeholder" className="w-full h-[200px] mb-5 rounded-lg" />
+        <img src="/img/landing-logo.png"
+          alt="placeholder"
+          className="w-full h-auto my-5 rounded-lg"
+        />
       </Paper>
     </Box>
   )

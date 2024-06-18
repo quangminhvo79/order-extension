@@ -3,14 +3,15 @@ import { Box } from '@mui/material'
 import usePolling from '@/hooks/use-polling'
 import { formatPrice } from '@/utils/helpers'
 import useExchangeRate from '@/hooks/use-exchange-rate'
-
+import { GET_NUMBER_REGEX_PATTERN } from '@/utils/constants'
 const PriceAsVND = ({ priceTextSelector }: {priceTextSelector: string}) => {
   const [price, setPrice] = useState(0)
   const { rate } = useExchangeRate('CNY')
 
   const fetchPrice = useCallback((timeout = 0) => {
     setTimeout(() => {
-      const priceText = document.querySelector(priceTextSelector)?.textContent
+      // get number from text
+      const priceText = document.querySelector(priceTextSelector)?.textContent?.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '')
       setPrice( Number(priceText) )
     }, timeout)
   }, [priceTextSelector])
@@ -27,8 +28,10 @@ const PriceAsVND = ({ priceTextSelector }: {priceTextSelector: string}) => {
   }, [fetchPrice, price, stop])
 
   return (
-    <Box fontSize={32} className="text-orange-500 ">{ formatPrice(Number(price) * rate)}</Box>
+    <Box fontSize={32} className="text-red-600 ">{ formatPrice(Number(price) * rate)}</Box>
   )
 }
 
 export default PriceAsVND
+
+// const priceText = document.querySelector(priceTextSelector)?.textContent?

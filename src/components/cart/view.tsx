@@ -8,6 +8,7 @@ import Shop from './shop'
 import ContactRow from './contact-info'
 import { formatPrice } from '@/utils/helpers'
 import Timeline from '@/components/timeline'
+import BankQrCode from './bank-qr-code'
 
 const CartView = ({
   cart,
@@ -24,26 +25,31 @@ const CartView = ({
   decreaseQty,
   onChangeQty,
   onCreateOrderRequest,
+  rate,
+  openDepositDialog,
+  setOpenDepositDialog,
 }: CartViewProps) => {
-
   const totalCashText = `Tổng thanh toán (${productIdsSelected?.length} sản phẩm): `
 
   return (
     <Box className="space-y-5">
       <Timeline />
       <Box className="w-full p-4">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" className="p-3 mb-4 bg-orange-100 border border-orange-300 rounded">
-          <Box className="space-x-2 text-2xl font-bold text-orange-500">
+        <Stack direction="row" alignItems="center"
+          justifyContent="space-between"
+          className="p-3 mb-4 bg-red-100 border border-red-300 rounded"
+        >
+          <Box className="space-x-2 text-2xl font-bold text-red-600">
             <ShoppingCartIcon />
             <span>Giỏ Hàng</span>
           </Box>
-          <Button color="light" onClick={onClearAll} size="md" className="text-orange-500 border-orange-300">
+          <Button color="light" onClick={onClearAll} size="md" className="text-red-600 border-red-300">
             Xóa tất cả đơn hàng
           </Button>
         </Stack>
         <Box className="p-2 overflow-x-auto">
           <Table hoverable>
-            <Table.Head className="text-orange-500 border-b border-gray-400">
+            <Table.Head className="text-red-600 border-b border-gray-400">
               <Table.HeadCell className="p-4 bg-slate-100">
                 <Checkbox onChange={onCheckAll} checked={allItemChecked}/>
               </Table.HeadCell>
@@ -73,32 +79,38 @@ const CartView = ({
                     />
                   ))}
                   <Table.Row key={`${orderByShop.shopId}_row`} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="w-10 font-medium text-orange-500 whitespace-nowrap dark:text-white bg-slate-100" colSpan={6}></Table.Cell>
+                    <Table.Cell className="w-10 font-medium text-red-600 whitespace-nowrap dark:text-white bg-slate-100" colSpan={6}></Table.Cell>
                   </Table.Row>
                 </>
                 ),
               )}
               {cart && <ContactRow />}
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                <Table.Cell className="font-medium text-orange-500 whitespace-nowrap dark:text-white" colSpan={6}>
+                <Table.Cell className="font-medium text-red-600 whitespace-nowrap dark:text-white" colSpan={6}>
                   <Stack className="flex-row items-center justify-end space-x-3">
                     <Typography>
                       <span className="text-sm text-gray-700">{totalCashText}</span>
-                      <span className="text-2xl font-bold text-orange-500">{ formatPrice(Number(totalCash)) }</span>
+                      <span className="text-2xl font-bold text-red-600">{ formatPrice(Number(totalCash)) }</span>
                     </Typography>
                     <Button
-                      color="light" size="md" className="text-orange-500 border-orange-300"
-                      onClick={onCreateOrderRequest}
+                      gradientMonochrome="failure"
+                      size="md"
+                      // onClick={onCreateOrderRequest}
+                      onClick={() => setOpenDepositDialog(true)}
                       disabled={!totalCash || totalCash === 0}
                     >
                       Đặt hàng
                     </Button>
+                  </Stack>
+                  <Stack>
+                    <Typography><i>Tỉ giá quy đổi: 1¥ = {formatPrice(rate)}</i></Typography>
                   </Stack>
                 </Table.Cell>
               </Table.Row>
             </Table.Body>
           </Table>
         </Box>
+        <BankQrCode isOpened={openDepositDialog} setOpenDepositDialog={setOpenDepositDialog} totalCash={Number(totalCash)}/>
       </Box>
     </Box>
   )

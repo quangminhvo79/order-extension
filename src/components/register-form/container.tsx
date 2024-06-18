@@ -3,7 +3,7 @@ import View from './view'
 import { useNavigate } from 'react-router-dom'
 import useCustomer from '@/hooks/use-customer'
 
-const RegisterFormContainer = () => {
+const RegisterFormContainer = ({ isGotoHome = true }: { isGotoHome?: boolean }) => {
   const formRef = useRef<HTMLFormElement>(null)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -24,7 +24,7 @@ const RegisterFormContainer = () => {
   }, [createUser, email, firstName, lastName, navigate, password])
 
   const onBack = useCallback(() => {
-    navigate('/')
+    isGotoHome ? navigate('/') : navigate('/login')
   }, [navigate])
 
   const computedProps = {
@@ -40,6 +40,7 @@ const RegisterFormContainer = () => {
     lastName,
     setLastName,
     isRegistering,
+    isGotoHome,
   }
 
   return <View {...computedProps} />

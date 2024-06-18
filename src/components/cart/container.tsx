@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useContext } from 'react'
 import isEmpty from 'lodash/isEmpty'
 import compact from 'lodash/compact'
 import includes from 'lodash/includes'
@@ -17,7 +17,7 @@ import useExchangeRate from '@/hooks/use-exchange-rate'
 const CartContainer = () => {
   const [cart, setCart] = useState<ItemByShopType[]>()
   const [productIdsSelected, setProductIdsSelected] = useState<string[]>([])
-  // const [openDepositDialog, setOpenDepositDialog] = useState(false)
+  const [openDepositDialog, setOpenDepositDialog] = useState(false)
   const { getProducts, removeAllProducts, saveProducts, calcProductTotalPrice } = useProduct()
   const {
     createOrderRequest,
@@ -223,6 +223,9 @@ const CartContainer = () => {
     decreaseQty,
     onChangeQty,
     onCreateOrderRequest,
+    rate,
+    openDepositDialog,
+    setOpenDepositDialog,
   }
 
   return <View {...computedProps} />

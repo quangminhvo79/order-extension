@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const backendDomain = process.env.BACKEND_DOMAIN
+const backendDomain = process.env.NODE_ENV == 'development' ? process.env.BACKEND_DEV_DOMAIN : process.env.BACKEND_DOMAIN
 const storefrontURL = `${backendDomain}/api/v2/storefront`
 
 export const storefrontAPI = axios.create({

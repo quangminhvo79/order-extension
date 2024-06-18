@@ -13,7 +13,7 @@ type MainContextType = {
   isLogged: boolean
   onSignOut: () => void
   userName?: string
-  onSignIn: (email: string, password: string, callback?: () => void) => void
+  onSignIn: (email: string, password: string, callback: (result: any) => void) => void
   showToastSuccess: (message: string) => void
   showToastError: (message: string) => void
 }
@@ -45,13 +45,8 @@ export const MainProvider = ({ children }: PropsWithChildren) => {
     refetchUserInfo()
   }, [refetchUserInfo, signOut])
 
-  const onSignIn = useCallback((email: string, password: string, callback?: () => void) => {
-    signIn(email, password).then((result) => {
-      if (result) {
-        // alert('Đăng nhập thành công')
-        callback?.()
-      }
-    })
+  const onSignIn = useCallback((email: string, password: string, callback: (result: any) => void) => {
+    signIn(email, password).then(callback)
   }, [signIn])
 
   const showToastSuccess = useCallback((message: string) => {
@@ -71,7 +66,7 @@ export const MainProvider = ({ children }: PropsWithChildren) => {
   }, [])
 
   const userName = useMemo(() => {
-    return `${user?.attributes?.first_name} ${user?.attributes?.last_name}`
+    return `${user?.attributes?.first_name || ''} ${user?.attributes?.last_name || ''}`.trim()
   }, [user])
 
   const contextValue = useMemo((): MainContextType => {

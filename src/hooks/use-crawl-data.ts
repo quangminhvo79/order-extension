@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
 import { CRAWLER_SELECTORS_ROUTE } from '@/utils/api_routes'
+import { GET_NUMBER_REGEX_PATTERN } from '@/utils/constants'
 
 type CrawlFieldData = {
   selector: string[],
@@ -157,7 +158,7 @@ const useCrawlData = (config_name: string) => {
   const getQuantityFrom1688 = useCallback((crawlerField: CrawlFieldData) => {
     const quantities = getDataFromCrawlerField(crawlerField)
     return quantities.map((item: string) => {
-      const match = item.match(/(\d+)/)
+      const match = item?.match(/(\d+)/)
       return match ? Number(match[0]) : 0
     }).reduce((acc: number, cur: number) => acc + cur, 0)
   }, [getDataFromCrawlerField])
@@ -173,11 +174,15 @@ const useCrawlData = (config_name: string) => {
 
       if (categoriesText && activeItems && (activeItems.length >= categoriesText.length)) {
         const name = getDataFromCrawlerField(crawlTags.name)[0]
-        const price = getDataFromCrawlerField(crawlTags.price)[0]
-        const salePrice = getDataFromCrawlerField(crawlTags.salePrice)[0]
+        const price = getDataFromCrawlerField(crawlTags.price)[0]?.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '')
+        const salePrice = getDataFromCrawlerField(crawlTags.salePrice)[0]?.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '')
         const image = getDataFromCrawlerField(crawlTags.image).concat(getImages(crawlTags.activeThumbnail))[0]
         const video = getDataFromCrawlerField(crawlTags.video)[0]
-        const quantity = Math.max(getDataFromCrawlerField(crawlTags.quantity)[0], getQuantityFrom1688(crawlTags.quantity))
+        const quantity = Math.max(
+          getDataFromCrawlerField(crawlTags.quantity).reduce((acc: number, cur: number) => Number(acc) + Number(cur), 0),
+          getQuantityFrom1688(crawlTags.quantity)
+        )
+
         const service = getDataFromCrawlerField(crawlTags.service)
         const shopName = getDataFromCrawlerField(crawlTags.shopName)[0]
         const shopLink = getDataFromCrawlerField(crawlTags.shopLink)[0]

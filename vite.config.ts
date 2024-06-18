@@ -8,7 +8,8 @@ const projectRootDir = resolve(__dirname);
 import dotenv from "dotenv"
 dotenv.config();
 
-const { BACKEND_DOMAIN } = process.env;
+const { BACKEND_DOMAIN, BACKEND_DEV_DOMAIN } = process.env;
+import { uglify } from "rollup-plugin-uglify";
 
 dotenv.config();
 // https://vitejs.dev/config/
@@ -33,6 +34,7 @@ export default defineConfig(({ mode }) => {
     define: {
       "process.env": JSON.stringify({
         BACKEND_DOMAIN,
+        BACKEND_DEV_DOMAIN
       })
     },
     plugins: [
@@ -47,7 +49,8 @@ export default defineConfig(({ mode }) => {
             replacement: resolve(projectRootDir, 'src')
           }
         ]
-      })
+      }),
+      uglify()
     ],
   }
 })

@@ -10,14 +10,14 @@ let manifest = {
   version: packageData.version,
   manifest_version: 3,
   icons: {
-    16: 'img/logo-16.png',
-    32: 'img/logo-32.png',
-    64: 'img/logo-64.png',
-    128: 'img/logo-128.png',
+    16: 'img/logo-16_x_16.png',
+    32: 'img/logo-32_x_32.png',
+    64: 'img/logo-64_x_64.png',
+    128: 'img/logo-128_x_128.png',
   },
   action: {
     default_popup: 'popup.html',
-    default_icon: 'img/logo-64.png',
+    default_icon: 'img/logo-64_x_64.png',
   },
   // options_page: 'options.html',
   // devtools_page: 'devtools.html',
@@ -26,7 +26,12 @@ let manifest = {
   },
   content_scripts: [
     {
-      matches: ['https://*.item.taobao.com/*', 'https://*.detail.tmall.com/*', 'https://*.detail.1688.com/*'],
+      matches: [
+        'https://*.item.taobao.com/*',
+        'https://*.detail.tmall.com/*',
+        'https://*.detail.1688.com/*',
+        'https://*.zara.com/*',
+      ],
       js: ['src/contentScript/index.tsx'],
     },
   ],
@@ -35,7 +40,7 @@ let manifest = {
   },
   web_accessible_resources: [
     {
-      resources: ['img/logo-16.png', 'img/logo-32.png', 'img/logo-64.png', 'img/logo-128.png'],
+      resources: ['img/logo-16_x_16.png', 'img/logo-32_x_32.png', 'img/logo-64_x_64.png', 'img/logo-128_x_128.png'],
       matches: [],
     },
   ],

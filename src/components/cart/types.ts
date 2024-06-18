@@ -1,4 +1,5 @@
 import { type Product } from '@/models/product'
+import { Dispatch, SetStateAction } from 'react'
 
 export type ItemByShopType = {
   shopName: string
@@ -24,4 +25,7 @@ export type CartViewProps = {
   decreaseQty: (productId: string) => void
   onChangeQty: (productId: string, qty: number) => void
   onCreateOrderRequest: () => void
+  rate: number
+  openDepositDialog: boolean
+  setOpenDepositDialog: Dispatch<SetStateAction<boolean>>
 }
