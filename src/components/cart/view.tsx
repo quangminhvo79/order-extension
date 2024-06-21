@@ -28,6 +28,8 @@ const CartView = ({
   rate,
   openDepositDialog,
   setOpenDepositDialog,
+  setInvoice,
+  invoice,
 }: CartViewProps) => {
   const totalCashText = `Tổng thanh toán (${productIdsSelected?.length} sản phẩm): `
 
@@ -110,7 +112,14 @@ const CartView = ({
             </Table.Body>
           </Table>
         </Box>
-        <BankQrCode isOpened={openDepositDialog} setOpenDepositDialog={setOpenDepositDialog} totalCash={Number(totalCash)}/>
+        <BankQrCode
+          isOpened={openDepositDialog}
+          setOpenDepositDialog={setOpenDepositDialog}
+          totalCash={Number(totalCash)}
+          onCreateOrderRequest={onCreateOrderRequest}
+          setInvoice={setInvoice}
+          invoice={invoice}
+        />
       </Box>
     </Box>
   )

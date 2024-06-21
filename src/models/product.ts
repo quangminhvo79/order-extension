@@ -19,4 +19,5 @@ export type Product = {
   sku?: string,
   market: string,
   rate: string | number,
+  invoice?: File,
 }

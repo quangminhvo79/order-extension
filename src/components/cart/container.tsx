@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, useContext } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import isEmpty from 'lodash/isEmpty'
 import compact from 'lodash/compact'
 import includes from 'lodash/includes'
@@ -187,11 +187,18 @@ const CartContainer = () => {
     })
   }, [refetchCart])
 
-  const onCreateOrderRequest = useCallback(async () => {
+  const [invoice, setInvoice] = useState<File>()
+
+  const onCreateOrderRequest = useCallback(async (callback?: () => void) => {
     // console.log('create order request', productsSelectedData)
+    // console.log('file', invoice)
+
     if (!productsSelectedData) return
-    const response = await createOrderRequest(productsSelectedData)
+    if (!invoice) return
+
+    const response = await createOrderRequest(productsSelectedData, invoice)
     // console.log('response', response)
+
     if (response.status === 200) {
       onRemoveProducts(productIdsSelected)
       setProductIdsSelected([])
@@ -206,7 +213,9 @@ const CartContainer = () => {
       })
     }
 
-  }, [productsSelectedData, createOrderRequest, onRemoveProducts, productIdsSelected])
+    callback?.()
+
+  }, [productsSelectedData, createOrderRequest, onRemoveProducts, productIdsSelected, invoice])
 
   const computedProps = {
     cart,
@@ -226,6 +235,8 @@ const CartContainer = () => {
     rate,
     openDepositDialog,
     setOpenDepositDialog,
+    setInvoice,
+    invoice,
   }
 
   return <View {...computedProps} />

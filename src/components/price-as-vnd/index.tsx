@@ -11,8 +11,10 @@ const PriceAsVND = ({ priceTextSelector }: {priceTextSelector: string}) => {
   const fetchPrice = useCallback((timeout = 0) => {
     setTimeout(() => {
       // get number from text
-      const priceText = document.querySelector(priceTextSelector)?.textContent?.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '')
-      setPrice( Number(priceText) )
+
+      const pricesText = Array.from(document.querySelectorAll(priceTextSelector)).map((el) => el.textContent || '')
+      const prices = pricesText.map((item: string) => parseFloat(item.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0') )
+      setPrice( Number(Math.min(...prices)) )
     }, timeout)
   }, [priceTextSelector])
 

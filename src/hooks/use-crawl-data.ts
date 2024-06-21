@@ -23,7 +23,7 @@ const useCrawlData = (config_name: string) => {
     enabled: !!config_name,
   })
 
-  const addDataIndexTag = useCallback((elements: (Element | null)[], dataTagName?: string) => {
+  const addDataIndexTag = useCallback((elements: Element[], dataTagName?: string) => {
     if (dataTagName) {
       Array.from(elements).forEach((element: any, index: number) => {
         element.dataset[dataTagName] = index
@@ -32,43 +32,31 @@ const useCrawlData = (config_name: string) => {
   }, [])
 
   const getDataFromRelativePath = useCallback((classNames: string[], attributeName?: string, dataTagName?: string) => {
-    const elements = flattenDeep(
-      classNames.map((className: string) => {
-        return document.querySelector(`[class*="${className}"]`)
-      }),
-    ).filter((element: any) => element)
-
+    const classNameBuilt = classNames.map((className: string) => `[class*="${className}"]`).join(', ')
+    const elements = Array.from(document.querySelectorAll(classNameBuilt))
     if (!elements) return []
 
     addDataIndexTag(elements, dataTagName)
 
     if (dataTagName) {
-      Array.from(elements).forEach((element: any, index: number) => {
+      elements.forEach((element: any, index: number) => {
         element.dataset[dataTagName] = index
       })
     }
 
-    return Array.from(elements).map((element: any) => {
+    return elements.map((element: any) => {
       return attributeName ? (element[attributeName] as string) : element
     })
   }, [addDataIndexTag])
 
   const getAllDataFromClassName = useCallback((classNames: string[], attributeName?: string, dataTagName?: string) => {
-    const elements = flattenDeep(
-      classNames.map((className: string) => {
-        return Array.from(document.querySelectorAll(className))
-      }),
-    ).filter((element: any) => {
-      if ((element.constructor === NodeList) || (element.constructor === Array))
-        return element.length > 0
-      return element
-    })
-
+    const classNameBuilt = classNames.join(', ')
+    const elements = Array.from(document.querySelectorAll(classNameBuilt))
     if (!elements) return []
 
     addDataIndexTag(elements, dataTagName)
 
-    return Array.from(elements).map((element: any) => {
+    return elements.map((element: any) => {
       return attributeName ? element[attributeName] : element
     })
   }, [addDataIndexTag])
@@ -174,13 +162,21 @@ const useCrawlData = (config_name: string) => {
 
       if (categoriesText && activeItems && (activeItems.length >= categoriesText.length)) {
         const name = getDataFromCrawlerField(crawlTags.name)[0]
-        const price = getDataFromCrawlerField(crawlTags.price)[0]?.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '')
-        const salePrice = getDataFromCrawlerField(crawlTags.salePrice)[0]?.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '')
+
+        const priceElements = getDataFromCrawlerField(crawlTags.price)
+        const prices = priceElements.map((item: string) => parseFloat(item.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0') )
+        const price = Math.min(...prices)
+
+        const salePriceElements = getDataFromCrawlerField(crawlTags.salePrice)
+        const salePrices = salePriceElements.map((item: string) => parseFloat(item.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0') )
+        const salePrice = Math.min(...salePrices)
+
         const image = getDataFromCrawlerField(crawlTags.image).concat(getImages(crawlTags.activeThumbnail))[0]
         const video = getDataFromCrawlerField(crawlTags.video)[0]
         const quantity = Math.max(
           getDataFromCrawlerField(crawlTags.quantity).reduce((acc: number, cur: number) => Number(acc) + Number(cur), 0),
-          getQuantityFrom1688(crawlTags.quantity)
+          getQuantityFrom1688(crawlTags.quantity),
+          1
         )
 
         const service = getDataFromCrawlerField(crawlTags.service)

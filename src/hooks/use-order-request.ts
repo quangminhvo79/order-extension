@@ -4,21 +4,26 @@ import { Product } from '@/models/product'
 import { storefrontAPI } from '@/utils/api'
 import useCustomer from './use-customer'
 import { errorResponseUnauthorized } from './use-customer'
+import { serialize } from 'object-to-formdata';
 
 const useOrderRequest = () => {
   const {
     authData,
   } = useCustomer()
 
-  const createOrderRequest = useCallback(async (products: Product[]) => {
+  const createOrderRequest = useCallback(async (products: Product[], invoice: File) => {
     if (!authData) return errorResponseUnauthorized
 
+    const formData = serialize(
+      products, undefined, undefined, 'products'
+    );
+    formData.append("invoice", invoice)
+
     try {
-      const response = await storefrontAPI.post('/order_requests', {
-        products,
-      },{
+      const response = await storefrontAPI.post('/order_requests', formData, {
         headers: {
           Authorization: `Bearer ${authData.access_token}`,
+          'Content-Type': 'multipart/form-data',
         },
       })
 

@@ -28,4 +28,6 @@ export type CartViewProps = {
   rate: number
   openDepositDialog: boolean
   setOpenDepositDialog: Dispatch<SetStateAction<boolean>>
+  setInvoice: Dispatch<SetStateAction<File | undefined>>
+  invoice?: File
 }
