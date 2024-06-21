@@ -1,7 +1,7 @@
 {
   "name": "todo-logistics-order-tool",
   "displayName": "TODO Logistics - Order Tool",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "MinhVo",
   "description": "Tool giúp khách hàng đặt hàng ở các chợ thương mại điện tử dể dàng hơn",
   "type": "module",

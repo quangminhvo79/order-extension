@@ -1,4 +1,5 @@
 import { Box, Paper, Stack, Typography } from '@mui/material'
+import packageData from '@/../package.json'
 
 type LandingPageViewProps = {
   isLogged: boolean
@@ -26,6 +27,7 @@ const LandingPageView = ({
           className="w-full h-auto my-5 rounded-lg"
         />
       </Paper>
+      <div className="text-right text-red-600">Version: {packageData.version}</div>
     </Box>
   )
 }
