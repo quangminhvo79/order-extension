@@ -135,7 +135,7 @@ const View = ({ orders }: { orders: any[] }) => {
                         <Typography className="whitespace-nowrap">{formatPrice(Number(product.price) * Number(product.rate))}</Typography>
                         {Boolean(product.salePrice) && (
                           <Typography className="text-red-600 whitespace-nowrap">
-                            <span>Sau Giảm Giá: </span>
+                            <span>Giảm giá còn: </span>
                             <span className="font-bold text-red-600">{ formatPrice(Number(product.salePrice) * Number(product.rate))} đ</span>
                           </Typography>
                         )}

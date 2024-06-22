@@ -31,45 +31,33 @@ const useCrawlData = (config_name: string) => {
     }
   }, [])
 
-  const getDataFromRelativePath = useCallback((classNames: string[], attributeName?: string, dataTagName?: string) => {
-    const classNameBuilt = classNames.map((className: string) => `[class*="${className}"]`).join(', ')
-    const elements = Array.from(document.querySelectorAll(classNameBuilt))
-    if (!elements) return []
-
-    addDataIndexTag(elements, dataTagName)
-
-    if (dataTagName) {
-      elements.forEach((element: any, index: number) => {
-        element.dataset[dataTagName] = index
-      })
+  const getElements = useCallback((crawlerField: CrawlFieldData) => {
+    let classNameBuilt = ''
+    if (crawlerField.query_type === 'class_relative') {
+      classNameBuilt = crawlerField.selector.map((className: string) => `[class*="${className}"]`).join(', ')
+    } else if (crawlerField.query_type === 'exactly_match') {
+      classNameBuilt = crawlerField.selector.join(', ')
     }
+    return Array.from(document.querySelectorAll(classNameBuilt))
+  }, [])
 
-    return elements.map((element: any) => {
-      return attributeName ? (element[attributeName] as string) : element
-    })
-  }, [addDataIndexTag])
-
-  const getAllDataFromClassName = useCallback((classNames: string[], attributeName?: string, dataTagName?: string) => {
-    const classNameBuilt = classNames.join(', ')
-    const elements = Array.from(document.querySelectorAll(classNameBuilt))
+  const getDataFromElements = useCallback((elements: Element[], attributeName?: string, dataTagName?: string) => {
     if (!elements) return []
 
     addDataIndexTag(elements, dataTagName)
 
-    return elements.map((element: any) => {
-      return attributeName ? element[attributeName] : element
-    })
+    return elements.map((element: any) => (element[(attributeName || 'textContent')] || '' as string))
   }, [addDataIndexTag])
 
   const getDataFromCrawlerField = useCallback((crawlerField: CrawlFieldData, dataTagName?: string) => {
-    if (crawlerField.query_type === 'class_relative') {
-      return getDataFromRelativePath(crawlerField.selector, crawlerField.selector_attribute, dataTagName)
-    } else if (crawlerField.query_type === 'exactly_match') {
-      return getAllDataFromClassName(crawlerField.selector, crawlerField.selector_attribute, dataTagName)
+    if (crawlerField.query_type === 'class_relative' || crawlerField.query_type === 'exactly_match') {
+      const elements = getElements(crawlerField)
+      return getDataFromElements(elements, crawlerField.selector_attribute, dataTagName)
+
     } else if (crawlerField.query_type === 'url_search_param') {
       return crawlerField.selector.map((selector: string) => {
-          return new URLSearchParams(document.location.search).get(selector)
-        })
+        return new URLSearchParams(document.location.search).get(selector)
+      })
     } else if (crawlerField.query_type === 'url_search_param_from_element') {
       const element = document.querySelector(crawlerField.selector[0]) as HTMLElement
       if (!element) return []
@@ -90,7 +78,7 @@ const useCrawlData = (config_name: string) => {
     }
 
     return []
-  }, [getAllDataFromClassName, getDataFromRelativePath])
+  }, [getDataFromElements, getElements])
 
   const getAllVariants = useCallback((
     variants: {
@@ -172,16 +160,18 @@ const useCrawlData = (config_name: string) => {
         const quantity = Math.max(
           getDataFromCrawlerField(crawlTags.quantity).reduce((acc: number, cur: number) => Number(acc) + Number(cur), 0),
           getQuantityFrom1688(crawlTags.quantity),
-          1
+          1,
         )
 
         const priceElements = getDataFromCrawlerField(crawlTags.price)
         const prices = priceElements.map((item: string) => parseFloat(item.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0') )
         let price = Math.max(...prices)
 
-        const totalPriceText = document.querySelector(crawlTags.totalPrice.selector.join(', '))?.textContent || ''
-        const totalPriceAsNumber = parseFloat(totalPriceText.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0')
-        if (totalPriceAsNumber > 0) price = Number(totalPriceAsNumber) / quantity
+        if (crawlTags.totalPrice?.selector) {
+          const totalPriceText = document.querySelector(crawlTags.totalPrice.selector.join(', '))?.textContent || ''
+          const totalPriceAsNumber = parseFloat(totalPriceText.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0')
+          if (totalPriceAsNumber > 0) price = Number(totalPriceAsNumber) / quantity
+        }
 
         const service = getDataFromCrawlerField(crawlTags.service)
         const shopName = getDataFromCrawlerField(crawlTags.shopName)[0]
@@ -236,6 +226,8 @@ const useCrawlData = (config_name: string) => {
   return {
     crawlData,
     crawlTags,
+    getDataFromCrawlerField,
+    getElements,
   }
 }
 
