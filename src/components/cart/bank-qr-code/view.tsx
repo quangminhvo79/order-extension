@@ -40,6 +40,7 @@ const BankQrCodeView = ({
   onSubmit,
   onDrop,
   filename,
+  isSubmitting,
 }: BankQrCodeViewProps) => {
   const {
     getRootProps,
@@ -139,8 +140,9 @@ const BankQrCodeView = ({
             <Button
               gradientMonochrome="failure" onClick={onSubmit} className="w-full"
               disabled={!bankAccount || !filename}
+              isProcessing={isSubmitting}
             >
-              Đã Thanh Toán
+              {'Đã Thanh Toán (Đặt hàng)'}
             </Button>
           </Stack>
         </DialogActions>

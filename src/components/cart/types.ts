@@ -30,4 +30,5 @@ export type CartViewProps = {
   setOpenDepositDialog: Dispatch<SetStateAction<boolean>>
   setInvoice: Dispatch<SetStateAction<File | undefined>>
   invoice?: File
+  isSubmitting: boolean
 }

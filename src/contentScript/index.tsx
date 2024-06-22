@@ -47,7 +47,7 @@ const handleAddPriceTag = (market: SupportedMarket) => {
         createRoot(document.getElementById('price-in-vnd') as HTMLElement).render(
           <React.StrictMode>
             <QueryClientProvider client={queryClient}>
-              <PriceAsVND priceTextSelector={market.price_text}/>
+              <PriceAsVND priceTextSelector={market.price_text} market={market.code}/>
             </QueryClientProvider>
           </React.StrictMode>,
         )

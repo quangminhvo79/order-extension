@@ -12,6 +12,7 @@ const BankQrCode = ({
   onCreateOrderRequest,
   invoice,
   setInvoice,
+  isSubmitting,
 }: BankQrCodeProps) => {
   const {
     bankAccounts,
@@ -34,7 +35,14 @@ const BankQrCode = ({
   }, [bankAccount, totalCash, transferDescription])
 
   const onSubmit = useCallback(() => {
-    if (invoice) onCreateOrderRequest(handleClose)
+    if (invoice) {
+      onCreateOrderRequest(() => {
+        setFilename(undefined)
+        setInvoice(undefined)
+        handleClose()
+      })
+      return
+    }
 
     toast.error('Vui lòng upload hóa đơn')
   }, [handleClose, onCreateOrderRequest])
@@ -65,6 +73,7 @@ const BankQrCode = ({
     onSubmit,
     onDrop,
     filename,
+    isSubmitting,
   }
 
   return <View {...computedProps} />

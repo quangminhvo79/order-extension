@@ -17,7 +17,8 @@ export type BankQrCodeViewProps = {
   isOpened: boolean
   onSubmit: () => void
   onDrop: (acceptedFiles: File[]) => void
-  filename?: string
+  filename?: string,
+  isSubmitting: boolean
 }
 
 export type BankQrCodeProps = {
@@ -27,4 +28,5 @@ export type BankQrCodeProps = {
   onCreateOrderRequest: (callback?: () => void) => void
   setInvoice: Dispatch<SetStateAction<File | undefined>>
   invoice?: File
+  isSubmitting: boolean
 }

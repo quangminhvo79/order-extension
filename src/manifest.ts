@@ -44,7 +44,7 @@ let manifest = {
       matches: [],
     },
   ],
-  permissions: ['sidePanel', 'storage'],
+  permissions: ['sidePanel', 'storage', 'activeTab'],
   chrome_url_overrides: {
     // newtab: 'newtab.html',
   },

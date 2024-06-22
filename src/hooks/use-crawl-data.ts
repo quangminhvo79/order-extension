@@ -163,13 +163,9 @@ const useCrawlData = (config_name: string) => {
       if (categoriesText && activeItems && (activeItems.length >= categoriesText.length)) {
         const name = getDataFromCrawlerField(crawlTags.name)[0]
 
-        const priceElements = getDataFromCrawlerField(crawlTags.price)
-        const prices = priceElements.map((item: string) => parseFloat(item.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0') )
-        const price = Math.min(...prices)
-
         const salePriceElements = getDataFromCrawlerField(crawlTags.salePrice)
         const salePrices = salePriceElements.map((item: string) => parseFloat(item.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0') )
-        const salePrice = Math.min(...salePrices)
+        const salePrice = Math.max(...salePrices)
 
         const image = getDataFromCrawlerField(crawlTags.image).concat(getImages(crawlTags.activeThumbnail))[0]
         const video = getDataFromCrawlerField(crawlTags.video)[0]
@@ -179,10 +175,19 @@ const useCrawlData = (config_name: string) => {
           1
         )
 
+        const priceElements = getDataFromCrawlerField(crawlTags.price)
+        const prices = priceElements.map((item: string) => parseFloat(item.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0') )
+        let price = Math.max(...prices)
+
+        const totalPriceText = document.querySelector(crawlTags.totalPrice.selector.join(', '))?.textContent || ''
+        const totalPriceAsNumber = parseFloat(totalPriceText.match(GET_NUMBER_REGEX_PATTERN)?.[0]?.replace(',', '') || '0')
+        if (totalPriceAsNumber > 0) price = Number(totalPriceAsNumber) / quantity
+
         const service = getDataFromCrawlerField(crawlTags.service)
         const shopName = getDataFromCrawlerField(crawlTags.shopName)[0]
-        const shopLink = getDataFromCrawlerField(crawlTags.shopLink)[0]
-        const shopId = shopLink ? new URL(shopLink).host.split('.')[0] : ''
+        const shopLink = new URL(getDataFromCrawlerField(crawlTags.shopLink)[0]).origin
+        const shopHost = new URL(getDataFromCrawlerField(crawlTags.shopLink)[0]).host
+        const shopId = shopLink ? shopHost.split('.')[0] : ''
 
         const activeVariantId = getActiveVariantId(crawlTags.variants.activeItem, 'variantId')
         const productIdFromElement = getDataFromCrawlerField(crawlTags.id)[0]
@@ -191,11 +196,13 @@ const useCrawlData = (config_name: string) => {
 
         if (config_name.toString() === '1688') {
           const variantCategoryName = getDataFromCrawlerField(crawlTags.variantQuantityCategory)
-          const variantItemName = getDataFromCrawlerField(crawlTags.variantQuantityCount)
+          const variantQuantityCount = getDataFromCrawlerField(crawlTags.variantQuantityCount)
           const variantQuantityPrice = getDataFromCrawlerField(crawlTags.variantQuantityPrice)
           const priceAndQuantity = variantQuantityPrice.map((item: string, index: number) => {
-            return `${item} -- ${variantItemName[index]}`
-          })
+            if (Number(variantQuantityCount[index]) === 0) return null
+
+            return `${item} -- ${variantQuantityCount[index]}`
+          }).filter((item: string | null) => item)
           variants.categoriesText = variants.categoriesText.concat(variantCategoryName)
           variants.activeItems = variants.activeItems.concat(priceAndQuantity)
         }
@@ -228,6 +235,7 @@ const useCrawlData = (config_name: string) => {
 
   return {
     crawlData,
+    crawlTags,
   }
 }
 

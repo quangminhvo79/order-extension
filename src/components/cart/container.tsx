@@ -23,6 +23,7 @@ const CartContainer = () => {
     createOrderRequest,
   } = useOrderRequest()
   const { rate } = useExchangeRate('CNY')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const productsSelectedData = useMemo(() => {
     return cart?.flatMap((item) => item.items.filter((product) => productIdsSelected.includes(product.id)))
@@ -190,14 +191,11 @@ const CartContainer = () => {
   const [invoice, setInvoice] = useState<File>()
 
   const onCreateOrderRequest = useCallback(async (callback?: () => void) => {
-    // console.log('create order request', productsSelectedData)
-    // console.log('file', invoice)
-
     if (!productsSelectedData) return
     if (!invoice) return
 
+    setIsSubmitting(true)
     const response = await createOrderRequest(productsSelectedData, invoice)
-    // console.log('response', response)
 
     if (response.status === 200) {
       onRemoveProducts(productIdsSelected)
@@ -213,8 +211,8 @@ const CartContainer = () => {
       })
     }
 
+    setIsSubmitting(false)
     callback?.()
-
   }, [productsSelectedData, createOrderRequest, onRemoveProducts, productIdsSelected, invoice])
 
   const computedProps = {
@@ -237,6 +235,7 @@ const CartContainer = () => {
     setOpenDepositDialog,
     setInvoice,
     invoice,
+    isSubmitting,
   }
 
   return <View {...computedProps} />

@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { Button } from 'flowbite-react'
 import { Checkbox, Table } from 'flowbite-react'
 import { CartViewProps } from './types'
@@ -30,6 +30,7 @@ const CartView = ({
   setOpenDepositDialog,
   setInvoice,
   invoice,
+  isSubmitting,
 }: CartViewProps) => {
   const totalCashText = `Tổng thanh toán (${productIdsSelected?.length} sản phẩm): `
 
@@ -119,6 +120,7 @@ const CartView = ({
           onCreateOrderRequest={onCreateOrderRequest}
           setInvoice={setInvoice}
           invoice={invoice}
+          isSubmitting={isSubmitting}
         />
       </Box>
     </Box>
