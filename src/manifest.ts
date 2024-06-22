@@ -19,8 +19,6 @@ let manifest = {
     default_popup: 'popup.html',
     default_icon: 'img/logo-64_x_64.png',
   },
-  // options_page: 'options.html',
-  // devtools_page: 'devtools.html',
   background: {
     service_worker: 'src/background/index.ts',
   },
@@ -30,7 +28,6 @@ let manifest = {
         'https://*.item.taobao.com/*',
         'https://*.detail.tmall.com/*',
         'https://*.detail.1688.com/*',
-        'https://*.zara.com/*',
       ],
       js: ['src/contentScript/index.tsx'],
     },
@@ -45,9 +42,6 @@ let manifest = {
     },
   ],
   permissions: ['sidePanel', 'storage', 'activeTab'],
-  chrome_url_overrides: {
-    // newtab: 'newtab.html',
-  },
 }
 
 export default defineManifest(manifest)
