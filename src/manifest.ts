@@ -41,7 +41,7 @@ let manifest = {
       matches: [],
     },
   ],
-  permissions: ['sidePanel', 'storage', 'activeTab'],
+  permissions: ['sidePanel', 'storage'],
 }
 
 export default defineManifest(manifest)
