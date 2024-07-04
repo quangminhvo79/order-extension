@@ -65,7 +65,7 @@ const BankQrCodeView = ({
       >
         <DialogTitle>
           <Typography className="text-lg font-bold text-red-600">
-            Vui lòng chuyển khoảng trước khi đặt hàng
+            Vui lòng chuyển khoản trước khi đặt hàng
           </Typography>
         </DialogTitle>
         <DialogContent>
