@@ -46,7 +46,9 @@ const useCrawlData = (config_name: string) => {
 
     addDataIndexTag(elements, dataTagName)
 
-    return elements.map((element: any) => (element[(attributeName || 'textContent')] || '' as string))
+    return elements.map((element: any) => {
+      return element[(attributeName || 'textContent')] || '' as string
+    }).filter((value: string) => value !== '')
   }, [addDataIndexTag])
 
   const getDataFromCrawlerField = useCallback((crawlerField: CrawlFieldData, dataTagName?: string) => {
